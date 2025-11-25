@@ -1,6 +1,9 @@
 from django import forms
-from .models import Student, Teacher, Notice, Attendance, Result, Fee, Book, BookIssue, ClassRoutine, Class, Subject, \
-    Gallery  # Gallery import করুন
+from .models import (
+    Student, Teacher, Notice, Attendance, Result, Fee,
+    Book, BookIssue, ClassRoutine, Class, Subject,
+    Gallery, Contact  # সব models import করুন
+)
 
 
 class StudentForm(forms.ModelForm):
@@ -20,10 +23,18 @@ class NoticeForm(forms.ModelForm):
         model = Notice
         fields = ['title', 'content', 'target_audience']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter notice title'}),
-            'content': forms.Textarea(
-                attrs={'class': 'form-control', 'rows': 6, 'placeholder': 'Enter notice content'}),
-            'target_audience': forms.Select(attrs={'class': 'form-select'}),
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter notice title'
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 6,
+                'placeholder': 'Enter notice content'
+            }),
+            'target_audience': forms.Select(attrs={
+                'class': 'form-select'
+            }),
         }
 
 
@@ -57,93 +68,29 @@ class BookIssueForm(forms.ModelForm):
         fields = ['book', 'student', 'return_date', 'returned']
 
 
-class SelectWithInput(forms.Select):
-    def __init__(self, attrs=None, choices=()):
-        super().__init__(attrs, choices)
-        if attrs:
-            attrs['class'] = attrs.get('class', '') + ' select-with-input'
-        else:
-            self.attrs = {'class': 'select-with-input'}
-
-
 class ClassRoutineForm(forms.ModelForm):
-    new_subject = forms.CharField(
-        required=False,
-        max_length=100,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Or enter new subject name',
-            'style': 'display: none; margin-top: 5px;'
-        }),
-        label="New Subject"
-    )
-
     class Meta:
         model = ClassRoutine
         fields = ['class_name', 'day', 'subject', 'start_time', 'end_time']
         widgets = {
-            'class_name': forms.Select(attrs={'class': 'form-select', 'required': 'required'}),
-            'day': forms.Select(attrs={'class': 'form-select', 'required': 'required'}),
-            'subject': SelectWithInput(attrs={'class': 'form-select', 'required': 'required'}),
-            'start_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time', 'required': 'required'}),
-            'end_time': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time', 'required': 'required'}),
+            'class_name': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'day': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'subject': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'start_time': forms.TimeInput(attrs={
+                'class': 'form-control',
+                'type': 'time'
+            }),
+            'end_time': forms.TimeInput(attrs={
+                'class': 'form-control',
+                'type': 'time'
+            }),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['class_name'].required = True
-        self.fields['day'].required = True
-        self.fields['subject'].required = False
-        self.fields['start_time'].required = True
-        self.fields['end_time'].required = True
-
-        self.fields['subject'].empty_label = "--- Select existing subject or add new below ---"
-
-    def clean(self):
-        cleaned_data = super().clean()
-        start_time = cleaned_data.get('start_time')
-        end_time = cleaned_data.get('end_time')
-        subject = cleaned_data.get('subject')
-        new_subject = cleaned_data.get('new_subject')
-        class_name = cleaned_data.get('class_name')
-
-        if not subject and not new_subject:
-            raise forms.ValidationError("Please either select an existing subject or enter a new subject name.")
-
-        if new_subject and not subject:
-            from django.contrib.auth.models import User
-            user = self.get_user()
-            if user and user.user_type == 'teacher':
-                try:
-                    teacher = Teacher.objects.get(user=user)
-                    subject, created = Subject.objects.get_or_create(
-                        name=new_subject,
-                        class_name=class_name,
-                        teacher=teacher,
-                        defaults={}
-                    )
-                    cleaned_data['subject'] = subject
-                    self.cleaned_data['subject'] = subject
-                except Teacher.DoesNotExist:
-                    raise forms.ValidationError("Teacher profile not found.")
-            else:
-                raise forms.ValidationError("Only teachers can create new subjects.")
-
-        if start_time and end_time and start_time >= end_time:
-            raise forms.ValidationError("End time must be after start time.")
-
-        return cleaned_data
-
-    def get_user(self):
-        if hasattr(self, 'user'):
-            return self.user
-        return None
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        if commit:
-            instance.save()
-        return instance
 
 
 class GalleryForm(forms.ModelForm):
@@ -167,3 +114,41 @@ class GalleryForm(forms.ModelForm):
                 'class': 'form-control'
             })
         }
+
+
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = ['name', 'email', 'phone', 'subject', 'message']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Your full name',
+                'required': 'required'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Your email address',
+                'required': 'required'
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Your phone number (optional)'
+            }),
+            'subject': forms.Select(attrs={
+                'class': 'form-select',
+                'required': 'required'
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 6,
+                'placeholder': 'Your message...',
+                'required': 'required'
+            }),
+        }
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if phone and not phone.replace(' ', '').replace('-', '').replace('+', '').isdigit():
+            raise forms.ValidationError("Please enter a valid phone number.")
+        return phone

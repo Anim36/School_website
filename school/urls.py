@@ -33,4 +33,10 @@ urlpatterns = [
     path('gallery/manage/', views.manage_gallery, name='manage_gallery'),
     path('gallery/delete/<int:image_id>/', views.delete_gallery_image, name='delete_gallery_image'),
 
+    # Contact URLs
+    path('contact/', views.contact, name='contact'),
+    path('contact/messages/', views.contact_messages, name='contact_messages'),
+    path('contact/messages/<int:message_id>/', views.contact_message_detail, name='contact_message_detail'),
+    path('contact/messages/<int:message_id>/responded/', views.mark_contact_responded, name='mark_contact_responded'),
+    path('contact/messages/<int:message_id>/delete/', views.delete_contact_message, name='delete_contact_message'),
 ]

@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Message Details - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2><i class="fas fa-envelope me-2"></i>Message Details</h2>
+            <div>
+                <a href="{% url 'contact_messages' %}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Messages
+                </a>
+                {% if not message.responded %}
+                <form method="post" action="{% url 'mark_contact_responded' message.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success me-2">
+                        <i class="fas fa-check me-2"></i>Mark as Responded
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{% url 'delete_contact_message' message.id %}" class="btn btn-outline-danger">
+                    <i class="fas fa-trash me-2"></i>Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> Message Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">From</h6>
+                        <p class="h5">{{ message.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Submitted</h6>
+                        <p class="h5">{{ message.submitted_at|date:"F d, Y H:i" }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Email</h6>
+                        <p>
+                            <a href="mailto:{{ message.email }}" class="text-decoration-none">
+                                <i class="fas fa-envelope me-2"></i>{{ message.email }}
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Phone</h6>
+                        <p>
+                            {% if message.phone %}
+                            <a href="tel:{{ message.phone }}" class="text-decoration-none">
+                                <i class="fas fa-phone me-2"></i>{{ message.phone }}
+                            </a>
+                            {% else %}
+                            <span class="text-muted">Not provided</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h6 class="text-muted">Subject</h6>
+                        <span class="badge bg-primary fs-6">{{ message.get_subject_display }}</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <h6 class="text-muted">Message</h6>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <p class="mb-0" style="white-space: pre-line;">{{ message.message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Status Information -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-tasks me-2"></i> Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>Read Status</h6>
+                    {% if message.is_read %}
+                    <span class="badge bg-success">Read</span>
+                    <small class="text-muted d-block mt-1">Message has been viewed</small>
+                    {% else %}
+                    <span class="badge bg-warning">Unread</span>
+                    <small class="text-muted d-block mt-1">Message has not been viewed</small>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <h6>Response Status</h6>
+                    {% if message.responded %}
+                    <span class="badge bg-success">Responded</span>
+                    <small class="text-muted d-block mt-1">Response has been sent</small>
+                    {% else %}
+                    <span class="badge bg-secondary">Not Responded</span>
+                    <small class="text-muted d-block mt-1">Awaiting response</small>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <h6>Message ID</h6>
+                    <code>{{ message.id }}</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="mailto:{{ message.email }}?subject=Re: {{ message.get_subject_display }} - Narail Collectorate School" 
+                       class="btn btn-primary">
+                        <i class="fas fa-reply me-2"></i>Reply via Email
+                    </a>
+                    
+                    {% if message.phone %}
+                    <a href="tel:{{ message.phone }}" class="btn btn-outline-primary">
+                        <i class="fas fa-phone me-2"></i>Call {{ message.name }}
+                    </a>
+                    {% endif %}
+
+                    {% if not message.responded %}
+                    <form method="post" action="{% url 'mark_contact_responded' message.id %}" class="d-grid">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check me-2"></i>Mark as Responded
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <a href="{% url 'delete_contact_message' message.id %}" class="btn btn-outline-danger">
+                        <i class="fas fa-trash me-2"></i>Delete Message
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

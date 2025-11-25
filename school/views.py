@@ -411,3 +411,100 @@ def delete_gallery_image(request, image_id):
         return redirect('manage_gallery')
 
     return render(request, 'school/delete_gallery_image.html', {'image': image})
+
+
+def contact(request):
+    """Contact Page"""
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            contact_message = form.save()
+            messages.success(request, 'Thank you for your message! We will get back to you soon.')
+            return redirect('contact')
+    else:
+        form = ContactForm()
+
+    context = {
+        'form': form,
+        'school_info': SchoolInfo.objects.first(),
+    }
+    return render(request, 'school/contact.html', context)
+
+
+@login_required
+def contact_messages(request):
+    """View contact messages (Admin and Teachers only)"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    messages_list = Contact.objects.all()
+
+    # Filter by status if provided
+    status_filter = request.GET.get('status', 'all')
+    if status_filter == 'unread':
+        messages_list = messages_list.filter(is_read=False)
+    elif status_filter == 'read':
+        messages_list = messages_list.filter(is_read=True)
+    elif status_filter == 'responded':
+        messages_list = messages_list.filter(responded=True)
+
+    context = {
+        'messages': messages_list,
+        'status_filter': status_filter,
+    }
+    return render(request, 'school/contact_messages.html', context)
+
+
+@login_required
+def contact_message_detail(request, message_id):
+    """View contact message details"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    message = get_object_or_404(Contact, id=message_id)
+
+    # Mark as read when viewed
+    if not message.is_read:
+        message.is_read = True
+        message.save()
+
+    context = {
+        'message': message,
+    }
+    return render(request, 'school/contact_message_detail.html', context)
+
+
+@login_required
+def mark_contact_responded(request, message_id):
+    """Mark contact message as responded"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    message = get_object_or_404(Contact, id=message_id)
+
+    if request.method == 'POST':
+        message.responded = True
+        message.save()
+        messages.success(request, 'Message marked as responded.')
+        return redirect('contact_messages')
+
+    return redirect('contact_message_detail', message_id=message_id)
+
+
+@login_required
+def delete_contact_message(request, message_id):
+    """Delete contact message"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    message = get_object_or_404(Contact, id=message_id)
+
+    if request.method == 'POST':
+        message.delete()
+        messages.success(request, 'Message deleted successfully.')
+        return redirect('contact_messages')
+
+    context = {
+        'message': message,
+    }
+    return render(request, 'school/delete_contact_message.html', context)

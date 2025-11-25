@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="hero-section bg-primary text-white rounded p-5">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 fw-bold">Contact Us</h1>
+                    <p class="lead">We'd Love to Hear From You</p>
+                    <p class="mb-0">Get in touch with us for any inquiries, suggestions, or feedback</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-envelope fa-6x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Contact Information -->
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i> Our Location</h5>
+            </div>
+            <div class="card-body">
+                <div class="contact-info-item mb-4">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-map-marker-alt text-primary mt-1 me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Address</h6>
+                            <p class="text-muted mb-0">
+                                {% if school_info %}{{ school_info.address }}{% else %}Collectorate Road, Narail 7500, Bangladesh{% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-info-item mb-4">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-phone text-primary mt-1 me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Phone</h6>
+                            <p class="text-muted mb-0">
+                                {% if school_info %}{{ school_info.phone }}{% else %}+880 XXXX-XXXXXX{% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-info-item mb-4">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-envelope text-primary mt-1 me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Email</h6>
+                            <p class="text-muted mb-0">
+                                {% if school_info %}{{ school_info.email }}{% else %}info@narailschool.edu.bd{% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-clock text-primary mt-1 me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Office Hours</h6>
+                            <p class="text-muted mb-0">Sunday - Thursday: 8:00 AM - 4:00 PM</p>
+                            <p class="text-muted mb-0">Friday: 8:00 AM - 12:00 PM</p>
+                            <p class="text-muted mb-0">Saturday: Closed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Contacts -->
+        <div class="card mt-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-users me-2"></i> Quick Contacts</h5>
+            </div>
+            <div class="card-body">
+                <div class="quick-contact-item mb-3">
+                    <h6 class="text-primary mb-1">Principal's Office</h6>
+                    <p class="text-muted small mb-1">principal@narailschool.edu.bd</p>
+                    <p class="text-muted small mb-0">+880 XXXX-XXXXXX</p>
+                </div>
+
+                <div class="quick-contact-item mb-3">
+                    <h6 class="text-primary mb-1">Admission Office</h6>
+                    <p class="text-muted small mb-1">admission@narailschool.edu.bd</p>
+                    <p class="text-muted small mb-0">+880 XXXX-XXXXXX</p>
+                </div>
+
+                <div class="quick-contact-item">
+                    <h6 class="text-primary mb-1">Academic Office</h6>
+                    <p class="text-muted small mb-1">academic@narailschool.edu.bd</p>
+                    <p class="text-muted small mb-0">+880 XXXX-XXXXXX</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-paper-plane me-2"></i> Send us a Message</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Please correct the errors below:</h6>
+                        <ul class="mb-0">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name *</label>
+                            {{ form.name }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email Address *</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone Number</label>
+                            {{ form.phone }}
+                            <div class="form-text">Optional - include country code</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Subject *</label>
+                            {{ form.subject }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Message *</label>
+                        {{ form.message }}
+                        <div class="form-text">Please provide detailed information about your inquiry</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="card mt-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-map me-2"></i> Find Us</h5>
+            </div>
+            <div class="card-body">
+                <div class="map-placeholder bg-light rounded p-5 text-center">
+                    <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Narail Collectorate School Location</h5>
+                    <p class="text-muted mb-3">Collectorate Road, Narail 7500, Bangladesh</p>
+                    <a href="#" class="btn btn-outline-primary">
+                        <i class="fas fa-directions me-2"></i>Get Directions
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+}
+
+.contact-info-item {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
+}
+
+.contact-info-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.quick-contact-item {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
+}
+
+.quick-contact-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.map-placeholder {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+</style>

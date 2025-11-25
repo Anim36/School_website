@@ -61,3 +61,23 @@ class BookAdmin(admin.ModelAdmin):
 class BookIssueAdmin(admin.ModelAdmin):
     list_display = ['book', 'student', 'issue_date', 'return_date', 'returned']
     list_filter = ['returned', 'issue_date']
+
+
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email', 'subject', 'submitted_at', 'is_read', 'responded']
+    list_filter = ['subject', 'is_read', 'responded', 'submitted_at']
+    search_fields = ['name', 'email', 'message']
+    readonly_fields = ['submitted_at']
+
+    def mark_as_read(self, request, queryset):
+        queryset.update(is_read=True)
+
+    mark_as_read.short_description = "Mark selected messages as read"
+
+    def mark_as_responded(self, request, queryset):
+        queryset.update(responded=True)
+
+    mark_as_responded.short_description = "Mark selected messages as responded"
+
+    actions = [mark_as_read, mark_as_responded]
