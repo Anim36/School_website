@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Gallery - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="hero-section bg-primary text-white rounded p-5">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 fw-bold">School Gallery</h1>
+                    <p class="lead">Capturing Moments, Creating Memories</p>
+                    <p class="mb-0">Explore the vibrant life at Narail Collectorate School through our photo gallery</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-images fa-6x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Filter -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Filter by Category</h5>
+                <div class="btn-group" role="group">
+                    <a href="?category=all" class="btn btn-outline-primary {% if selected_category == 'all' %}active{% endif %}">
+                        All Images
+                    </a>
+                    {% for category_value, category_name in categories %}
+                    <a href="?category={{ category_value }}" class="btn btn-outline-primary {% if selected_category == category_value %}active{% endif %}">
+                        {{ category_name }}
+                    </a>
+                    {% endfor %}
+                </div>
+
+                {% if user.user_type == 'admin' or user.user_type == 'teacher' %}
+                <div class="mt-3">
+                    <a href="{% url 'add_gallery_image' %}" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>Add New Image
+                    </a>
+                    <a href="{% url 'manage_gallery' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-cog me-2"></i>Manage Gallery
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gallery Images -->
+<div class="row">
+    {% if images %}
+        {% for image in images %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card gallery-card h-100">
+                <img src="{{ image.image.url }}" class="card-img-top gallery-image" alt="{{ image.title }}" style="height: 250px; object-fit: cover;">
+                <div class="card-body">
+                    <h6 class="card-title">{{ image.title }}</h6>
+                    {% if image.description %}
+                    <p class="card-text small text-muted">{{ image.description|truncatewords:15 }}</p>
+                    {% endif %}
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">{{ image.get_category_display }}</span>
+                        <small class="text-muted">{{ image.upload_date|date:"M d, Y" }}</small>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        <i class="fas fa-user me-1"></i>
+                        Uploaded by {{ image.uploaded_by.get_full_name }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-images fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Images Found</h4>
+                    <p class="text-muted">No images available in this category.</p>
+                    {% if user.user_type == 'admin' or user.user_type == 'teacher' %}
+                    <a href="{% url 'add_gallery_image' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add First Image
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Pagination (if needed) -->
+{% if images.has_other_pages %}
+<div class="row mt-4">
+    <div class="col-12">
+        <nav aria-label="Gallery pagination">
+            <ul class="pagination justify-content-center">
+                {% if images.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ images.previous_page_number }}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}">Previous</a>
+                </li>
+                {% endif %}
+
+                {% for num in images.paginator.page_range %}
+                <li class="page-item {% if images.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endfor %}
+
+                {% if images.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ images.next_page_number }}{% if selected_category != 'all' %}&category={{ selected_category }}{% endif %}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+<style>
+.gallery-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.gallery-card:hover {
+    transform: translateY(-5px);
+    border-color: #0d6efd;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.gallery-image {
+    transition: transform 0.3s ease;
+}
+
+.gallery-card:hover .gallery-image {
+    transform: scale(1.05);
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+}
+
+.btn-group .btn {
+    border-radius: 20px;
+    margin: 2px;
+}
+</style>

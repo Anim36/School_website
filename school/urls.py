@@ -26,4 +26,11 @@ urlpatterns = [
     # New Pages
     path('about/', views.about, name='about'),
     path('teachers-members/', views.teachers_members, name='teachers_members'),
+
+    # Gallery URLs
+    path('gallery/', views.gallery, name='gallery'),
+    path('gallery/add/', views.add_gallery_image, name='add_gallery_image'),
+    path('gallery/manage/', views.manage_gallery, name='manage_gallery'),
+    path('gallery/delete/<int:image_id>/', views.delete_gallery_image, name='delete_gallery_image'),
+
 ]

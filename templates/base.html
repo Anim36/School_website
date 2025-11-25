@@ -174,11 +174,8 @@
         <li class="mb-2"><a href="{% url 'home' %}" class="text-light text-decoration-none hover-primary">Home</a></li>
         <li class="mb-2"><a href="{% url 'about' %}" class="text-light text-decoration-none hover-primary">About Us</a></li>
         <li class="mb-2"><a href="{% url 'teachers_members' %}" class="text-light text-decoration-none hover-primary">Teachers Members</a></li>
-        {% if user.is_authenticated %}
-            <li class="mb-2"><a href="{% url 'dashboard' %}" class="text-light text-decoration-none hover-primary">Dashboard</a></li>
-            <li class="mb-2"><a href="{% url 'class_routine' %}" class="text-light text-decoration-none hover-primary">Class Routine</a></li>
-            <li class="mb-2"><a href="{% url 'notice_board' %}" class="text-light text-decoration-none hover-primary">Notices</a></li>
-        {% else %}
+        <li class="mb-2"><a href="{% url 'gallery' %}" class="text-light text-decoration-none hover-primary">Gallery</a></li>
+        {% if not user.is_authenticated %}
             <li class="mb-2"><a href="{% url 'login' %}" class="text-light text-decoration-none hover-primary">Login</a></li>
             <li class="mb-2"><a href="{% url 'register' %}" class="text-light text-decoration-none hover-primary">Register</a></li>
         {% endif %}

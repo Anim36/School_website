@@ -1,5 +1,6 @@
 from django import forms
-from .models import Student, Teacher, Notice, Attendance, Result, Fee, Book, BookIssue, ClassRoutine, Class, Subject
+from .models import Student, Teacher, Notice, Attendance, Result, Fee, Book, BookIssue, ClassRoutine, Class, Subject, \
+    Gallery  # Gallery import করুন
 
 
 class StudentForm(forms.ModelForm):
@@ -59,7 +60,6 @@ class BookIssueForm(forms.ModelForm):
 class SelectWithInput(forms.Select):
     def __init__(self, attrs=None, choices=()):
         super().__init__(attrs, choices)
-        # Add a custom attribute to identify this widget
         if attrs:
             attrs['class'] = attrs.get('class', '') + ' select-with-input'
         else:
@@ -91,14 +91,12 @@ class ClassRoutineForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Make fields required
         self.fields['class_name'].required = True
         self.fields['day'].required = True
-        self.fields['subject'].required = False  # Make it optional since we have new_subject
+        self.fields['subject'].required = False
         self.fields['start_time'].required = True
         self.fields['end_time'].required = True
 
-        # Add empty choice for subject
         self.fields['subject'].empty_label = "--- Select existing subject or add new below ---"
 
     def clean(self):
@@ -109,19 +107,15 @@ class ClassRoutineForm(forms.ModelForm):
         new_subject = cleaned_data.get('new_subject')
         class_name = cleaned_data.get('class_name')
 
-        # Check if either subject or new_subject is provided
         if not subject and not new_subject:
             raise forms.ValidationError("Please either select an existing subject or enter a new subject name.")
 
-        # If new subject is provided, create it
         if new_subject and not subject:
-            # Check if user is teacher
             from django.contrib.auth.models import User
             user = self.get_user()
             if user and user.user_type == 'teacher':
                 try:
                     teacher = Teacher.objects.get(user=user)
-                    # Create new subject
                     subject, created = Subject.objects.get_or_create(
                         name=new_subject,
                         class_name=class_name,
@@ -141,14 +135,35 @@ class ClassRoutineForm(forms.ModelForm):
         return cleaned_data
 
     def get_user(self):
-        # Helper method to get user from form instance
         if hasattr(self, 'user'):
             return self.user
         return None
 
     def save(self, commit=True):
-        # Set the user for the form if available
         instance = super().save(commit=False)
         if commit:
             instance.save()
         return instance
+
+
+class GalleryForm(forms.ModelForm):
+    class Meta:
+        model = Gallery
+        fields = ['title', 'description', 'image', 'category']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter image title'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Enter image description (optional)'
+            }),
+            'category': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'image': forms.FileInput(attrs={
+                'class': 'form-control'
+            })
+        }

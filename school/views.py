@@ -343,3 +343,71 @@ def teachers_members(request):
         'school_info': SchoolInfo.objects.first(),
     }
     return render(request, 'school/teachers_members.html', context)
+
+
+def gallery(request):
+    """Gallery Page"""
+    categories = Gallery.CATEGORY_CHOICES
+    selected_category = request.GET.get('category', 'all')
+
+    if selected_category == 'all':
+        images = Gallery.objects.filter(is_active=True)
+    else:
+        images = Gallery.objects.filter(category=selected_category, is_active=True)
+
+    context = {
+        'images': images,
+        'categories': categories,
+        'selected_category': selected_category,
+    }
+    return render(request, 'school/gallery.html', context)
+
+
+@login_required
+def add_gallery_image(request):
+    """Add new image to gallery (Admin and Teachers only)"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    if request.method == 'POST':
+        form = GalleryForm(request.POST, request.FILES)
+        if form.is_valid():
+            gallery_item = form.save(commit=False)
+            gallery_item.uploaded_by = request.user
+            gallery_item.save()
+            messages.success(request, 'Image added to gallery successfully!')
+            return redirect('gallery')
+    else:
+        form = GalleryForm()
+
+    return render(request, 'school/add_gallery_image.html', {'form': form})
+
+
+@login_required
+def manage_gallery(request):
+    """Manage gallery images (Admin and Teachers only)"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    images = Gallery.objects.all().order_by('-upload_date')
+    return render(request, 'school/manage_gallery.html', {'images': images})
+
+
+@login_required
+def delete_gallery_image(request, image_id):
+    """Delete gallery image"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    image = get_object_or_404(Gallery, id=image_id)
+
+    # Check if user owns the image or is admin
+    if image.uploaded_by != request.user and request.user.user_type != 'admin':
+        return HttpResponseForbidden("You can only delete your own images.")
+
+    if request.method == 'POST':
+        image.delete()
+        messages.success(request, 'Image deleted successfully!')
+        return redirect('manage_gallery')
+
+    return render(request, 'school/delete_gallery_image.html', {'image': image})

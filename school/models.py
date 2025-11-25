@@ -153,3 +153,30 @@ class BookIssue(models.Model):
 
     def __str__(self):
         return f"{self.book} - {self.student}"
+
+
+class Gallery(models.Model):
+    CATEGORY_CHOICES = (
+        ('school', 'School Campus'),
+        ('events', 'School Events'),
+        ('sports', 'Sports'),
+        ('cultural', 'Cultural Programs'),
+        ('classroom', 'Classroom Activities'),
+        ('teachers', 'Teachers'),
+        ('students', 'Students'),
+    )
+
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    image = models.ImageField(upload_to='gallery/')
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='school')
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    upload_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = "Gallery"
+        ordering = ['-upload_date']
