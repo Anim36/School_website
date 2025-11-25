@@ -42,20 +42,23 @@
         <li class="nav-item">
             <a class="nav-link" href="{% url 'results' %}"><i class="fas fa-chart-line"></i> Results</a>
         </li>
-        {% if user.user_type == 'admin' or user.user_type == 'teacher' %}
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="managementDropdown" role="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-cog"></i> Management
-                </a>
-                <ul class="dropdown-menu">
-                    {% if user.user_type == 'admin' %}
-                        <li><a class="dropdown-item" href="{% url 'student_management' %}"><i class="fas fa-users"></i> Students</a></li>
-                        <li><a class="dropdown-item" href="{% url 'teacher_management' %}"><i class="fas fa-chalkboard-teacher"></i> Teachers</a></li>
-                    {% endif %}
-                    <li><a class="dropdown-item" href="{% url 'add_notice' %}"><i class="fas fa-plus"></i> Add Notice</a></li>
-                </ul>
-            </li>
+        <!-- In the navbar section, update the management dropdown -->
+{% if user.user_type == 'admin' or user.user_type == 'teacher' %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="managementDropdown" role="button" data-bs-toggle="dropdown">
+        <i class="fas fa-cog"></i> Management
+    </a>
+    <ul class="dropdown-menu">
+        {% if user.user_type == 'admin' %}
+        <li><a class="dropdown-item" href="{% url 'student_management' %}"><i class="fas fa-users"></i> Students</a></li>
+        <li><a class="dropdown-item" href="{% url 'teacher_management' %}"><i class="fas fa-chalkboard-teacher"></i> Teachers</a></li>
         {% endif %}
+        <li><a class="dropdown-item" href="{% url 'add_notice' %}"><i class="fas fa-plus"></i> Add Notice</a></li>
+        <li><a class="dropdown-item" href="{% url 'manage_class_routines' %}"><i class="fas fa-calendar-alt"></i> Manage Routines</a></li>
+        <li><a class="dropdown-item" href="{% url 'add_class_routine' %}"><i class="fas fa-plus-circle"></i> Add Routine</a></li>
+    </ul>
+</li>
+{% endif %}
     {% endif %}
 </ul>
                 <ul class="navbar-nav">

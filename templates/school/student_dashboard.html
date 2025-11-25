@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - School Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-tachometer-alt"></i> Student Dashboard</h2>
+    <div class="btn-group">
+        <a href="{% url 'student_profile' %}" class="btn btn-outline-primary"><i class="fas fa-user-edit"></i> My Profile</a>
+    </div>
+</div>
+
+<!-- Student Info Card -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="card-title">Student Information</h5>
+                        <p class="card-text">
+                            <strong>Name:</strong> {{ student.user.get_full_name }}<br>
+                            <strong>Student ID:</strong> {{ student.student_id }}<br>
+                            <strong>Class:</strong> {{ student.class_name }} - {{ student.section }}<br>
+                            <strong>Roll No:</strong> {{ student.roll_number }}<br>
+                            <strong>Email:</strong> {{ student.user.email }}
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="profile-picture mb-3">
+                            {% if student.user.profile_picture %}
+                                <img src="{{ student.user.profile_picture.url }}" alt="Profile Picture" 
+                                     class="img-fluid rounded-circle" 
+                                     style="width: 100px; height: 100px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                                     style="width: 100px; height: 100px;">
+                                    <i class="fas fa-user fa-2x"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <p class="mt-2 mb-0">Student</p>
+                        <span class="badge bg-primary">{{ student.student_id }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-chart-line text-primary"></i></h3>
+                <h5>Overall Percentage</h5>
+                <h2 class="text-primary">85%</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-calendar-check text-success"></i></h3>
+                <h5>Attendance</h5>
+                <h2 class="text-success">{{ attendance_percentage }}%</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-book text-info"></i></h3>
+                <h5>Books Issued</h5>
+                <h2 class="text-info">{{ total_books }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-money-bill-wave text-warning"></i></h3>
+                <h5>Fee Status</h5>
+                <h2 class="text-warning">Pending</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-rocket"></i> Quick Access</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <a href="{% url 'class_routine' %}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-calendar-alt"></i> Class Routine
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{% url 'results' %}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-chart-line"></i> My Results
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{% url 'attendance' %}" class="btn btn-outline-info w-100">
+                            <i class="fas fa-calendar-check"></i> My Attendance
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{% url 'library' %}" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-book"></i> Library
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{% url 'fee_payment' %}" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-credit-card"></i> Fee Payment
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{% url 'notice_board' %}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-bullhorn"></i> Notices
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <!-- Recent Notices -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bullhorn"></i> Recent Notices</h5>
+            </div>
+            <div class="card-body">
+                {% for notice in recent_notices %}
+                <div class="notice-item border-bottom pb-2 mb-2">
+                    <h6 class="text-primary">{{ notice.title }}</h6>
+                    <p class="small text-muted mb-1">{{ notice.content|truncatewords:15 }}</p>
+                    <small class="text-muted">
+                        <i class="fas fa-calendar"></i> {{ notice.created_at|date:"M d, Y" }}
+                    </small>
+                </div>
+                {% empty %}
+                <p class="text-muted mb-0">No recent notices.</p>
+                {% endfor %}
+                <div class="text-center mt-3">
+                    <a href="{% url 'notice_board' %}" class="btn btn-sm btn-outline-primary">View All Notices</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bell"></i> Recent Activities</h5>
+            </div>
+            <div class="card-body">
+                <div class="activity-list">
+                    <div class="activity-item border-bottom pb-2 mb-2">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <span>You logged in successfully</span>
+                        <small class="text-muted d-block">Just now</small>
+                    </div>
+                    <div class="activity-item border-bottom pb-2 mb-2">
+                        <i class="fas fa-book text-primary me-2"></i>
+                        <span>New assignment posted in Mathematics</span>
+                        <small class="text-muted d-block">2 hours ago</small>
+                    </div>
+                    <div class="activity-item">
+                        <i class="fas fa-chart-line text-info me-2"></i>
+                        <span>Mid-term results published</span>
+                        <small class="text-muted d-block">3 days ago</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Class Routines - School Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar-alt"></i> Manage Class Routines</h2>
+    <div class="btn-group">
+        <a href="{% url 'add_class_routine' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Routine</a>
+        <a href="{% url 'class_routine' %}" class="btn btn-outline-secondary">View Routine</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-6">
+                <h5 class="mb-0">All Class Routines</h5>
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control search-input" placeholder="Search routines...">
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Day</th>
+                        <th>Subject</th>
+                        <th>Time</th>
+                        <th>Teacher</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for routine in routines %}
+                    <tr>
+                        <td>{{ routine.class_name.name }}</td>
+                        <td>{{ routine.day }}</td>
+                        <td>{{ routine.subject.name }}</td>
+                        <td>{{ routine.start_time|time:"H:i" }} - {{ routine.end_time|time:"H:i" }}</td>
+                        <td>{{ routine.subject.teacher.user.get_full_name }}</td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'edit_class_routine' routine.id %}" class="btn btn-sm btn-outline-warning">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="{% url 'delete_class_routine' routine.id %}" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No class routines found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

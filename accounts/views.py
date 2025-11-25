@@ -54,21 +54,26 @@ def register(request):
 
 @login_required
 def dashboard(request):
-    user_type = request.user.user_type
-    context = {'user_type': user_type}
+    # Redirect based on user type
+    if request.user.user_type == 'student':
+        return redirect('student_dashboard')
+    else:
+        # For admin and teachers, show the regular dashboard
+        user_type = request.user.user_type
+        context = {'user_type': user_type}
 
-    if user_type == 'student':
-        try:
-            context['student'] = Student.objects.get(user=request.user)
-        except Student.DoesNotExist:
-            context['student'] = None
-    elif user_type == 'teacher':
-        try:
-            context['teacher'] = Teacher.objects.get(user=request.user)
-        except Teacher.DoesNotExist:
-            context['teacher'] = None
+        if user_type == 'student':
+            try:
+                context['student'] = Student.objects.get(user=request.user)
+            except Student.DoesNotExist:
+                context['student'] = None
+        elif user_type == 'teacher':
+            try:
+                context['teacher'] = Teacher.objects.get(user=request.user)
+            except Teacher.DoesNotExist:
+                context['teacher'] = None
 
-    return render(request, 'accounts/dashboard.html', context)
+        return render(request, 'accounts/dashboard.html', context)
 
 
 @login_required

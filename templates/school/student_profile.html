@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - School Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0"><i class="fas fa-user-graduate"></i> Student Profile</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <div class="profile-picture mb-3">
+                            {% if student.user.profile_picture %}
+                                <img src="{{ student.user.profile_picture.url }}" alt="Profile Picture" 
+                                     class="img-fluid rounded-circle" 
+                                     style="width: 150px; height: 150px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                                     style="width: 150px; height: 150px;">
+                                    <i class="fas fa-user fa-3x"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <h5>{{ student.user.get_full_name }}</h5>
+                        <p class="text-muted">Student</p>
+                        <span class="badge bg-primary">{{ student.student_id }}</span>
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <h5 class="text-primary mb-3">Personal Information</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Full Name:</strong><br>
+                                {{ student.user.get_full_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Date of Birth:</strong><br>
+                                {% if student.date_of_birth %}
+                                    {{ student.date_of_birth|date:"M d, Y" }}
+                                {% else %}
+                                    Not set
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Gender:</strong><br>
+                                {{ student.gender }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Phone:</strong><br>
+                                {{ student.user.phone|default:"Not provided" }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Email:</strong><br>
+                                {{ student.user.email }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Address:</strong><br>
+                                {{ student.user.address|default:"Not provided" }}
+                            </div>
+                        </div>
+                        
+                        <h5 class="text-primary mt-4 mb-3">Academic Information</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <strong>Class:</strong><br>
+                                {{ student.class_name }}
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Section:</strong><br>
+                                {{ student.section }}
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Roll No:</strong><br>
+                                {{ student.roll_number }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Admission Date:</strong><br>
+                                {{ student.admission_date|date:"M d, Y" }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Status:</strong><br>
+                                <span class="badge bg-success">Active</span>
+                            </div>
+                        </div>
+                        
+                        <h5 class="text-primary mt-4 mb-3">Parent Information</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Parent's Name:</strong><br>
+                                {{ student.parent_name|default:"Not provided" }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Parent's Phone:</strong><br>
+                                {{ student.parent_phone|default:"Not provided" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{% url 'student_dashboard' %}" class="btn btn-secondary me-md-2">Back to Dashboard</a>
+                    <a href="{% url 'profile' %}" class="btn btn-primary">Edit Personal Info</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

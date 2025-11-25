@@ -11,6 +11,15 @@ urlpatterns = [
     path('library/', views.library_management, name='library'),
     path('fees/', views.fee_payment, name='fee_payment'),
     path('admission/', views.online_admission, name='online_admission'),
-    #path('parent-portal/', views.parent_portal, name='parent_portal'),
     path('add-notice/', views.add_notice, name='add_notice'),
+
+    # Student specific URLs
+    path('student/dashboard/', views.student_dashboard, name='student_dashboard'),
+    path('student/profile/', views.student_profile, name='student_profile'),
+
+    # Class Routine Management URLs
+    path('routine/add/', views.add_class_routine, name='add_class_routine'),
+    path('routine/manage/', views.manage_class_routines, name='manage_class_routines'),
+    path('routine/edit/<int:routine_id>/', views.edit_class_routine, name='edit_class_routine'),
+    path('routine/delete/<int:routine_id>/', views.delete_class_routine, name='delete_class_routine'),
 ]
