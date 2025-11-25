@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Hero Section -->
+        <div class="hero-section bg-primary text-white rounded p-5 mb-5">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 fw-bold">About Narail Collectorate School</h1>
+                    <p class="lead">Excellence in Education Since 1985</p>
+                    <p class="mb-0">Where we nurture young minds to become future leaders through quality education and holistic development.</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <img src="/static/images/Scl_logo.jpg" alt="School Logo" class="img-fluid rounded-circle" style="max-height: 200px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- School Overview -->
+<div class="row mb-5">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-school me-2"></i> School Overview</h4>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Narail Collectorate School is one of the most prestigious educational institutions in the district, 
+                    established in 1985 with a vision to provide quality education to students from all backgrounds. 
+                    Our school has been at the forefront of academic excellence and character building for decades.
+                </p>
+                <p class="card-text">
+                    We believe in holistic development, combining academic rigor with extracurricular activities 
+                    to ensure our students grow into well-rounded individuals. Our dedicated faculty and 
+                    state-of-the-art facilities create an environment conducive to learning and personal growth.
+                </p>
+                
+                <h5 class="mt-4 text-primary">Our Mission</h5>
+                <p class="card-text">
+                    To provide a comprehensive and innovative educational experience that empowers students 
+                    to achieve their full potential and become responsible, ethical, and productive citizens 
+                    in a global society.
+                </p>
+                
+                <h5 class="mt-4 text-primary">Our Vision</h5>
+                <p class="card-text">
+                    To be a center of excellence in education that nurtures creativity, critical thinking, 
+                    and character development, preparing students for the challenges of the 21st century.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Quick Stats -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i> At a Glance</h5>
+            </div>
+            <div class="card-body">
+                <div class="stats-item text-center mb-4">
+                    <div class="stat-number display-6 text-primary fw-bold">{{ teachers_count }}</div>
+                    <div class="stat-label text-muted">Qualified Teachers</div>
+                </div>
+                <div class="stats-item text-center mb-4">
+                    <div class="stat-number display-6 text-success fw-bold">{{ students_count }}+</div>
+                    <div class="stat-label text-muted">Happy Students</div>
+                </div>
+                <div class="stats-item text-center">
+                    <div class="stat-number display-6 text-info fw-bold">35+</div>
+                    <div class="stat-label text-muted">Years of Excellence</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Info -->
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> Contact Information</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-2">
+                    <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                    Collectorate Road, Narail 7500
+                </p>
+                <p class="mb-2">
+                    <i class="fas fa-phone text-primary me-2"></i>
+                    +880 XXXX-XXXXXX
+                </p>
+                <p class="mb-2">
+                    <i class="fas fa-envelope text-primary me-2"></i>
+                    info@narailschool.edu.bd
+                </p>
+                <p class="mb-0">
+                    <i class="fas fa-clock text-primary me-2"></i>
+                    Mon-Fri: 8:00 AM - 4:00 PM
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Facilities Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0"><i class="fas fa-building me-2"></i> Our Facilities</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center mb-4">
+                        <div class="facility-icon bg-primary text-white rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; line-height: 80px;">
+                            <i class="fas fa-book fa-2x"></i>
+                        </div>
+                        <h6>Modern Library</h6>
+                        <p class="text-muted small">Well-stocked with books and digital resources</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-4">
+                        <div class="facility-icon bg-success text-white rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; line-height: 80px;">
+                            <i class="fas fa-flask fa-2x"></i>
+                        </div>
+                        <h6>Science Labs</h6>
+                        <p class="text-muted small">Fully equipped physics, chemistry & biology labs</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-4">
+                        <div class="facility-icon bg-info text-white rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; line-height: 80px;">
+                            <i class="fas fa-laptop fa-2x"></i>
+                        </div>
+                        <h6>Computer Lab</h6>
+                        <p class="text-muted small">Modern computer lab with internet access</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-4">
+                        <div class="facility-icon bg-warning text-white rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; line-height: 80px;">
+                            <i class="fas fa-running fa-2x"></i>
+                        </div>
+                        <h6>Sports Complex</h6>
+                        <p class="text-muted small">Indoor and outdoor sports facilities</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Achievements -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="fas fa-trophy me-2"></i> Our Achievements</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="fas fa-award text-warning me-2"></i>
+                                Best School Award 2023 - Narail District
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-award text-warning me-2"></i>
+                                95% Pass Rate in SSC Examination 2023
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-award text-warning me-2"></i>
+                                National Science Fair Champions 2022
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="fas fa-award text-warning me-2"></i>
+                                Best Debating Team - Divisional Level 2023
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-award text-warning me-2"></i>
+                                Sports Championship Winners 2022-2023
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-award text-warning me-2"></i>
+                                Digital School Award 2023
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -160,4 +160,27 @@
         </div>
     </div>
 </div>
+<!-- About and Teachers Section in Home Page -->
+<div class="row mt-5">
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-school fa-3x text-primary mb-3"></i>
+                <h5>About Our School</h5>
+                <p>Learn about our history, mission, and facilities</p>
+                <a href="{% url 'about' %}" class="btn btn-outline-primary">View</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-chalkboard-teacher fa-3x text-success mb-3"></i>
+                <h5>Meet Our Teachers</h5>
+                <p>Get to know our dedicated teaching faculty</p>
+                <a href="{% url 'teachers_members' %}" class="btn btn-outline-success">View Teachers</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

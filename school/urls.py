@@ -22,4 +22,8 @@ urlpatterns = [
     path('routine/manage/', views.manage_class_routines, name='manage_class_routines'),
     path('routine/edit/<int:routine_id>/', views.edit_class_routine, name='edit_class_routine'),
     path('routine/delete/<int:routine_id>/', views.delete_class_routine, name='delete_class_routine'),
+
+    # New Pages
+    path('about/', views.about, name='about'),
+    path('teachers-members/', views.teachers_members, name='teachers_members'),
 ]

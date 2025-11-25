@@ -168,33 +168,22 @@
                 </div>
 
                 <!-- Quick Links -->
-                <div class="col-lg-2 col-md-3 col-6 mb-4">
-                    <h6 class="text-white mb-3">Quick Links</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{% url 'home' %}" class="text-light text-decoration-none hover-primary">Home</a></li>
-                        {% if user.is_authenticated %}
-                            <li class="mb-2"><a href="{% url 'dashboard' %}" class="text-light text-decoration-none hover-primary">Dashboard</a></li>
-                            <li class="mb-2"><a href="{% url 'class_routine' %}" class="text-light text-decoration-none hover-primary">Class Routine</a></li>
-                            <li class="mb-2"><a href="{% url 'notice_board' %}" class="text-light text-decoration-none hover-primary">Notices</a></li>
-                            <li class="mb-2"><a href="{% url 'results' %}" class="text-light text-decoration-none hover-primary">Results</a></li>
-                        {% else %}
-                            <li class="mb-2"><a href="{% url 'login' %}" class="text-light text-decoration-none hover-primary">Login</a></li>
-                            <li class="mb-2"><a href="{% url 'register' %}" class="text-light text-decoration-none hover-primary">Register</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-
-                <!-- Resources -->
-                <div class="col-lg-2 col-md-3 col-6 mb-4">
-                    <h6 class="text-white mb-3">Resources</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{% url 'library' %}" class="text-light text-decoration-none hover-primary">Library</a></li>
-                        <li class="mb-2"><a href="{% url 'online_admission' %}" class="text-light text-decoration-none hover-primary">Admission</a></li>
-                        <li class="mb-2"><a href="{% url 'fee_payment' %}" class="text-light text-decoration-none hover-primary">Fee Payment</a></li>
-                        <li class="mb-2"><a href="#" class="text-light text-decoration-none hover-primary">Academic Calendar</a></li>
-                        <li class="mb-2"><a href="#" class="text-light text-decoration-none hover-primary">Downloads</a></li>
-                    </ul>
-                </div>
+<div class="col-lg-4 col-md-6 mb-4">
+    <h6 class="text-white mb-3">Quick Links</h6>
+    <ul class="list-unstyled">
+        <li class="mb-2"><a href="{% url 'home' %}" class="text-light text-decoration-none hover-primary">Home</a></li>
+        <li class="mb-2"><a href="{% url 'about' %}" class="text-light text-decoration-none hover-primary">About Us</a></li>
+        <li class="mb-2"><a href="{% url 'teachers_members' %}" class="text-light text-decoration-none hover-primary">Teachers Members</a></li>
+        {% if user.is_authenticated %}
+            <li class="mb-2"><a href="{% url 'dashboard' %}" class="text-light text-decoration-none hover-primary">Dashboard</a></li>
+            <li class="mb-2"><a href="{% url 'class_routine' %}" class="text-light text-decoration-none hover-primary">Class Routine</a></li>
+            <li class="mb-2"><a href="{% url 'notice_board' %}" class="text-light text-decoration-none hover-primary">Notices</a></li>
+        {% else %}
+            <li class="mb-2"><a href="{% url 'login' %}" class="text-light text-decoration-none hover-primary">Login</a></li>
+            <li class="mb-2"><a href="{% url 'register' %}" class="text-light text-decoration-none hover-primary">Register</a></li>
+        {% endif %}
+    </ul>
+</div>
 
                 <!-- Connect With Us -->
                 <div class="col-lg-4 col-md-6 mb-4">
@@ -234,7 +223,7 @@
             <!-- Bottom Bar -->
             <div class="row pt-4 border-top border-secondary">
                 <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-0">&copy; 2024 {% if school_info %}{{ school_info.name }}{% else %}School Management System{% endif %}. All rights reserved.</p>
+                    <p class="mb-0">&copy; 2024 {% if school_info %}{{ school_info.name }}{% else %}Narail Collectorate School{% endif %}. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <small class="text-muted">

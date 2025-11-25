@@ -324,3 +324,22 @@ def delete_class_routine(request, routine_id):
         return redirect('manage_class_routines')
 
     return render(request, 'school/delete_class_routine.html', {'routine': routine})
+
+
+def about(request):
+    """About School Page"""
+    context = {
+        'school_info': SchoolInfo.objects.first(),
+        'teachers_count': Teacher.objects.count(),
+        'students_count': Student.objects.count(),
+    }
+    return render(request, 'school/about.html', context)
+
+def teachers_members(request):
+    """Teachers Members Page"""
+    teachers = Teacher.objects.all().select_related('user')
+    context = {
+        'teachers': teachers,
+        'school_info': SchoolInfo.objects.first(),
+    }
+    return render(request, 'school/teachers_members.html', context)
