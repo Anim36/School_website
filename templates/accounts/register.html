@@ -80,17 +80,39 @@
                     <div id="student-fields" style="display: {% if form.user_type.value == 'student' %}block{% else %}none{% endif %};">
                         <h5 class="mb-3 text-primary mt-4">Student Information</h5>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="id_gender" class="form-label">Gender</label>
-                                    {{ form.gender }}
+                                    <select name="gender" id="id_gender" class="form-select">
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="id_date_of_birth" class="form-label">Date of Birth</label>
-                                    {{ form.date_of_birth }}
-                                    <div class="form-text">{{ form.date_of_birth.help_text }}</div>
+                                    <input type="date" name="date_of_birth" id="id_date_of_birth" class="form-control">
+                                    <div class="form-text">Format: YYYY-MM-DD</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="id_class_name" class="form-label">Class</label>
+                                    <select name="class_name" id="id_class_name" class="form-select">
+                                        <option value="">Select Class</option>
+                                        <option value="Class 1">Class 1</option>
+                                        <option value="Class 2">Class 2</option>
+                                        <option value="Class 3">Class 3</option>
+                                        <option value="Class 4">Class 4</option>
+                                        <option value="Class 5">Class 5</option>
+                                        <option value="Class 6">Class 6</option>
+                                        <option value="Class 7">Class 7</option>
+                                        <option value="Class 8">Class 8</option>
+                                        <option value="Class 9">Class 9</option>
+                                        <option value="Class 10">Class 10</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -98,22 +120,35 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="id_class_name" class="form-label">Class</label>
-                                    {{ form.class_name }}
-                                    <div class="form-text">{{ form.class_name.help_text }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
                                     <label for="id_section" class="form-label">Section</label>
-                                    {{ form.section }}
-                                    <div class="form-text">{{ form.section.help_text }}</div>
+                                    <select name="section" id="id_section" class="form-select">
+                                        <option value="">Select Section</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="id_roll_number" class="form-label">Roll Number</label>
-                                    {{ form.roll_number }}
+                                    <input type="number" name="roll_number" id="id_roll_number" class="form-control" min="1" placeholder="Enter roll number">
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6 class="mb-3 text-info">Parent Information</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_father_name" class="form-label">Father's Name</label>
+                                    <input type="text" name="father_name" id="id_father_name" class="form-control" placeholder="Father's full name">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_mother_name" class="form-label">Mother's Name</label>
+                                    <input type="text" name="mother_name" id="id_mother_name" class="form-control" placeholder="Mother's full name">
                                 </div>
                             </div>
                         </div>
@@ -121,14 +156,52 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="id_parent_name" class="form-label">Parent's Name</label>
-                                    {{ form.parent_name }}
+                                    <label for="id_parent_phone" class="form-label">Parent's Phone</label>
+                                    <input type="text" name="parent_phone" id="id_parent_phone" class="form-control" placeholder="Parent's phone number">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="id_parent_phone" class="form-label">Parent's Phone</label>
-                                    {{ form.parent_phone }}
+                                    <label for="id_parent_email" class="form-label">Parent's Email</label>
+                                    <input type="email" name="parent_email" id="id_parent_email" class="form-control" placeholder="Parent's email address">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teacher Specific Fields -->
+                    <div id="teacher-fields" style="display: {% if form.user_type.value == 'teacher' %}block{% else %}none{% endif %};">
+                        <h5 class="mb-3 text-primary mt-4">Teacher Information</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_teacher_gender" class="form-label">Gender</label>
+                                    <select name="teacher_gender" id="id_teacher_gender" class="form-select">
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_teacher_dob" class="form-label">Date of Birth</label>
+                                    <input type="date" name="teacher_dob" id="id_teacher_dob" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_qualification" class="form-label">Qualification</label>
+                                    <input type="text" name="qualification" id="id_qualification" class="form-control" placeholder="e.g., M.A., B.Ed., etc.">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_specialization" class="form-label">Specialization</label>
+                                    <input type="text" name="specialization" id="id_specialization" class="form-control" placeholder="e.g., Mathematics, Science, etc.">
                                 </div>
                             </div>
                         </div>
@@ -167,7 +240,9 @@
                     </div>
 
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-success btn-lg">Create Account</button>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
                     </div>
 
                     <div class="text-center mt-3">
@@ -179,11 +254,15 @@
 
         <div class="card mt-4">
             <div class="card-body text-center">
-                <h6>Register As:</h6>
+                <h6>Quick Registration</h6>
+                <p class="text-muted small mb-3">Select your account type to auto-fill the form</p>
                 <div class="btn-group w-100 mt-2">
-                    <button type="button" class="btn btn-outline-primary user-type-btn" data-type="student">Student</button>
-                    <button type="button" class="btn btn-outline-success user-type-btn" data-type="teacher">Teacher</button>
-                    <!--<button type="button" class="btn btn-outline-info user-type-btn" data-type="parent">Parent</button>-->
+                    <button type="button" class="btn btn-outline-primary user-type-btn" data-type="student">
+                        <i class="fas fa-user-graduate me-2"></i>Student
+                    </button>
+                    <button type="button" class="btn btn-outline-success user-type-btn" data-type="teacher">
+                        <i class="fas fa-chalkboard-teacher me-2"></i>Teacher
+                    </button>
                 </div>
             </div>
         </div>
@@ -194,18 +273,40 @@
 document.addEventListener('DOMContentLoaded', function() {
     const userTypeSelect = document.getElementById('id_user_type');
     const studentFields = document.getElementById('student-fields');
+    const teacherFields = document.getElementById('teacher-fields');
     const userTypeBtns = document.querySelectorAll('.user-type-btn');
 
     function toggleFields() {
         const selectedType = userTypeSelect.value;
-        studentFields.style.display = selectedType === 'student' ? 'block' : 'none';
+
+        // Show/hide student fields
+        if (selectedType === 'student') {
+            studentFields.style.display = 'block';
+            teacherFields.style.display = 'none';
+        }
+        // Show/hide teacher fields
+        else if (selectedType === 'teacher') {
+            studentFields.style.display = 'none';
+            teacherFields.style.display = 'block';
+        }
+        // Hide both for other types
+        else {
+            studentFields.style.display = 'none';
+            teacherFields.style.display = 'none';
+        }
 
         // Update button states
         userTypeBtns.forEach(btn => {
             if (btn.getAttribute('data-type') === selectedType) {
-                btn.classList.add('active');
+                btn.classList.remove('btn-outline-primary', 'btn-outline-success');
+                btn.classList.add('btn-primary');
             } else {
-                btn.classList.remove('active');
+                btn.classList.remove('btn-primary');
+                if (btn.getAttribute('data-type') === 'student') {
+                    btn.classList.add('btn-outline-primary');
+                } else {
+                    btn.classList.add('btn-outline-success');
+                }
             }
         });
     }
@@ -220,27 +321,111 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Form validation for student fields
+    const studentForm = document.querySelector('form');
+    studentForm.addEventListener('submit', function(e) {
+        const userType = userTypeSelect.value;
+
+        if (userType === 'student') {
+            const className = document.getElementById('id_class_name').value;
+            const section = document.getElementById('id_section').value;
+            const rollNumber = document.getElementById('id_roll_number').value;
+
+            if (!className || !section || !rollNumber) {
+                e.preventDefault();
+                alert('Please fill all required student information: Class, Section, and Roll Number.');
+                return false;
+            }
+        }
+    });
+
     // Initial toggle
     toggleFields();
 });
 </script>
 
 <style>
-.user-type-btn.active {
-    background-color: #0d6efd;
-    color: white;
-    border-color: #0d6efd;
+.user-type-btn {
+    transition: all 0.3s ease;
+}
+
+.user-type-btn:hover {
+    transform: translateY(-2px);
 }
 
 .form-control, .form-select {
     border-radius: 8px;
     border: 2px solid #e9ecef;
     padding: 10px 15px;
+    transition: all 0.3s ease;
 }
 
 .form-control:focus, .form-select:focus {
     border-color: #0d6efd;
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    transform: translateY(-1px);
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .btn-group {
+        flex-direction: column;
+    }
+
+    .user-type-btn {
+        margin-bottom: 5px;
+        border-radius: 8px !important;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+/* Loading animation */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Form section styling */
+h5.text-primary, h6.text-info {
+    border-bottom: 2px solid #0d6efd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+h6.text-info {
+    border-color: #0dcaf0;
+    color: #0dcaf0 !important;
 }
 </style>
 {% endblock %}

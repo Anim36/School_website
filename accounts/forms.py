@@ -88,3 +88,81 @@ class ProfileUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Make email required
         self.fields['email'].required = True
+
+
+class StudentRegistrationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    # Student Information
+    class_name = forms.ChoiceField(
+        choices=[
+            ('Class 1', 'Class 1'),
+            ('Class 2', 'Class 2'),
+            ('Class 3', 'Class 3'),
+            ('Class 4', 'Class 4'),
+            ('Class 5', 'Class 5'),
+            ('Class 6', 'Class 6'),
+            ('Class 7', 'Class 7'),
+            ('Class 8', 'Class 8'),
+            ('Class 9', 'Class 9'),
+            ('Class 10', 'Class 10'),
+        ],
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    section = forms.ChoiceField(
+        choices=[('A', 'A'), ('B', 'B'), ('C', 'C')],
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    roll_number = forms.IntegerField(
+        min_value=1,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter roll number'})
+    )
+
+    # Parent Information
+    father_name = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': "Father's full name"
+        })
+    )
+    mother_name = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': "Mother's full name"
+        })
+    )
+    parent_phone = forms.CharField(
+        max_length=15,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': "Parent's phone number"
+        })
+    )
+    parent_email = forms.EmailField(
+        required=False,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': "Parent's email address"
+        })
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'username', 'email', 'password1', 'password2',
+            'first_name', 'last_name', 'phone',
+            'class_name', 'section', 'roll_number',
+            'father_name', 'mother_name', 'parent_phone', 'parent_email'
+        ]
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter username'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter email'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter first name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter last name'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your phone number'}),
+        }

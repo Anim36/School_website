@@ -1,124 +1,240 @@
 {% extends 'base.html' %}
 
-{% block title %}My Profile - School Management System{% endblock %}
+{% block title %}My Profile - {{ school_info.name }}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="hero-section bg-primary text-white rounded p-5">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 fw-bold">Student Profile</h1>
+                    <p class="lead">Welcome, {{ student.user.get_full_name }}</p>
+                    <p class="mb-0">Manage your personal and academic information</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-user-graduate fa-6x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Personal Information -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-user me-2"></i> Personal Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <strong>Full Name:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ student.user.get_full_name }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <strong>Student ID:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        <span class="badge bg-primary">{{ student.student_id }}</span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ student.user.email }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <strong>Phone:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ student.user.phone|default:"Not provided" }}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <strong>Class:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ student.class_name }} - Section {{ student.section }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Roll No:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ student.roll_number }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Parent Information -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-users me-2"></i> Parent Information</h5>
+            </div>
+            <div class="card-body">
+                {% if student.father_name or student.mother_name %}
+                    {% if student.father_name %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Father's Name:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ student.father_name }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if student.mother_name %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Mother's Name:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ student.mother_name }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if student.parent_phone %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Parent's Phone:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            <a href="tel:{{ student.parent_phone }}" class="text-decoration-none">
+                                <i class="fas fa-phone me-2"></i>{{ student.parent_phone }}
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if student.parent_email %}
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <strong>Parent's Email:</strong>
+                        </div>
+                        <div class="col-sm-8">
+                            <a href="mailto:{{ student.parent_email }}" class="text-decoration-none">
+                                <i class="fas fa-envelope me-2"></i>{{ student.parent_email }}
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <p>No parent information available</p>
+                        <a href="{% url 'profile' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-edit me-2"></i>Update Profile
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Academic Information -->
+<div class="row">
+    <div class="col-12">
         <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="card-title mb-0"><i class="fas fa-user-graduate"></i> Student Profile</h4>
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i> Academic Information</h5>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4 text-center">
-                        <div class="profile-picture mb-3">
-                            {% if student.user.profile_picture %}
-                                <img src="{{ student.user.profile_picture.url }}" alt="Profile Picture"
-                                     class="img-fluid rounded-circle"
-                                     style="width: 150px; height: 150px; object-fit: cover;">
-                            {% else %}
-                                <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center"
-                                     style="width: 150px; height: 150px;">
-                                    <i class="fas fa-user-graduate fa-3x"></i>
-                                </div>
-                            {% endif %}
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="academic-stat">
+                            <div class="stat-number text-primary fw-bold">{{ student.class_name }}</div>
+                            <div class="stat-label text-muted">Current Class</div>
                         </div>
-                        <h5>{{ student.user.get_full_name }}</h5>
-                        <p class="text-muted">Student</p>
-                        <span class="badge bg-primary">{{ student.student_id }}</span>
                     </div>
-
-                    <div class="col-md-8">
-                        <h5 class="text-primary mb-3">Personal Information</h5>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <strong>Full Name:</strong><br>
-                                {{ student.user.get_full_name }}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Date of Birth:</strong><br>
-                                {% if student.date_of_birth %}
-                                    {{ student.date_of_birth|date:"M d, Y" }}
-                                {% else %}
-                                    Not set
-                                {% endif %}
-                            </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="academic-stat">
+                            <div class="stat-number text-success fw-bold">{{ student.section }}</div>
+                            <div class="stat-label text-muted">Section</div>
                         </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <strong>Gender:</strong><br>
-                                {{ student.gender }}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Phone:</strong><br>
-                                {{ student.user.phone|default:"Not provided" }}
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <strong>Email:</strong><br>
-                                {{ student.user.email }}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Address:</strong><br>
-                                {{ student.user.address|default:"Not provided" }}
-                            </div>
-                        </div>
-
-                        <h5 class="text-primary mt-4 mb-3">Academic Information</h5>
-                        <div class="row mb-3">
-                            <div class="col-md-4">
-                                <strong>Class:</strong><br>
-                                {{ student.class_name }}
-                            </div>
-                            <div class="col-md-4">
-                                <strong>Section:</strong><br>
-                                {{ student.section }}
-                            </div>
-                            <div class="col-md-4">
-                                <strong>Roll No:</strong><br>
-                                {{ student.roll_number }}
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <strong>Admission Date:</strong><br>
-                                {{ student.admission_date|date:"M d, Y" }}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Status:</strong><br>
-                                <span class="badge bg-success">Active</span>
-                            </div>
-                        </div>
-
-                        <h5 class="text-primary mt-4 mb-3">Parent Information</h5>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Parent's Name:</strong><br>
-                                {{ student.parent_name|default:"Not provided" }}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Parent's Phone:</strong><br>
-                                {{ student.parent_phone|default:"Not provided" }}
-                            </div>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <div class="academic-stat">
+                            <div class="stat-number text-info fw-bold">{{ student.roll_number }}</div>
+                            <div class="stat-label text-muted">Roll Number</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                    <a href="{% url 'student_dashboard' %}" class="btn btn-secondary me-md-2">
-                        <i class="fas fa-arrow-left"></i> Back to Dashboard
-                    </a>
-                    <a href="{% url 'profile' %}" class="btn btn-primary">
-                        <i class="fas fa-edit"></i> Edit Personal Info
-                    </a>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'profile' %}" class="btn btn-primary me-md-2">
+                                <i class="fas fa-edit me-2"></i>Edit Profile
+                            </a>
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-tachometer-alt me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+}
+
+.academic-stat {
+    padding: 20px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.academic-stat:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+</style>

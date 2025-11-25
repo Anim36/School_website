@@ -16,16 +16,60 @@ def register(request):
             user_type = form.cleaned_data.get('user_type')
 
             if user_type == 'student':
+                # Create student with parent information
                 student_id = 'STU' + ''.join(random.choices(string.digits, k=6))
-                Student.objects.create(user=user, student_id=student_id)
+
+                # Get additional student fields from POST data
+                gender = request.POST.get('gender', '')
+                date_of_birth = request.POST.get('date_of_birth') or None
+                class_name = request.POST.get('class_name', 'Class 1')
+                section = request.POST.get('section', 'A')
+                roll_number = request.POST.get('roll_number', 1)
+                father_name = request.POST.get('father_name', '')
+                mother_name = request.POST.get('mother_name', '')
+                parent_phone = request.POST.get('parent_phone', '')
+                parent_email = request.POST.get('parent_email', '')
+
+                Student.objects.create(
+                    user=user,
+                    student_id=student_id,
+                    gender=gender,
+                    date_of_birth=date_of_birth,
+                    class_name=class_name,
+                    section=section,
+                    roll_number=roll_number,
+                    father_name=father_name,
+                    mother_name=mother_name,
+                    parent_phone=parent_phone,
+                    parent_email=parent_email
+                )
+                messages.success(request, f'Student account created successfully! Your Student ID is: {student_id}')
+
             elif user_type == 'teacher':
+                # Create teacher with additional information
                 teacher_id = 'TCH' + ''.join(random.choices(string.digits, k=6))
-                Teacher.objects.create(user=user, teacher_id=teacher_id)
+
+                # Get additional teacher fields from POST data
+                gender = request.POST.get('teacher_gender', '')
+                date_of_birth = request.POST.get('teacher_dob') or None
+                qualification = request.POST.get('qualification', '')
+                specialization = request.POST.get('specialization', '')
+
+                Teacher.objects.create(
+                    user=user,
+                    teacher_id=teacher_id,
+                    gender=gender,
+                    date_of_birth=date_of_birth,
+                    qualification=qualification,
+                    specialization=specialization
+                )
+                messages.success(request, f'Teacher account created successfully! Your Teacher ID is: {teacher_id}')
 
             login(request, user)
             return redirect('dashboard')
     else:
         form = UserRegistrationForm()
+
     return render(request, 'accounts/register.html', {'form': form})
 
 

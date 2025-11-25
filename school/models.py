@@ -16,17 +16,36 @@ class SchoolInfo(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     student_id = models.CharField(max_length=20, unique=True)
-    date_of_birth = models.DateField(null=True, blank=True)  # Optional করা হয়েছে
+    date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=(('Male', 'Male'), ('Female', 'Female')), default='Male')
     class_name = models.CharField(max_length=50, default='Class 1')
     section = models.CharField(max_length=10, default='A')
     roll_number = models.IntegerField(default=1)
-    parent_name = models.CharField(max_length=100, blank=True)
-    parent_phone = models.CharField(max_length=15, blank=True)
+
+    # Parent Information
+    father_name = models.CharField(max_length=100, blank=True, verbose_name="Father's Name")
+    mother_name = models.CharField(max_length=100, blank=True, verbose_name="Mother's Name")
+    parent_phone = models.CharField(max_length=15, blank=True, verbose_name="Parent's Phone")
+    parent_email = models.EmailField(blank=True, verbose_name="Parent's Email")
+    parent_address = models.TextField(blank=True, verbose_name="Parent's Address")
+
     admission_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
+        return f"{self.user.get_full_name()} ({self.student_id})"
+
+    def get_parent_info(self):
+        """Get formatted parent information"""
+        info = []
+        if self.father_name:
+            info.append(f"Father: {self.father_name}")
+        if self.mother_name:
+            info.append(f"Mother: {self.mother_name}")
+        if self.parent_phone:
+            info.append(f"Phone: {self.parent_phone}")
+        if self.parent_email:
+            info.append(f"Email: {self.parent_email}")
+        return info
 
 
 class Teacher(models.Model):
