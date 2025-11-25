@@ -7,6 +7,7 @@
     <h2><i class="fas fa-tachometer-alt"></i> Student Dashboard</h2>
     <div class="btn-group">
         <a href="{% url 'student_profile' %}" class="btn btn-outline-primary"><i class="fas fa-user-edit"></i> My Profile</a>
+        <a href="{% url 'profile' %}" class="btn btn-outline-secondary"><i class="fas fa-cog"></i> Settings</a>
     </div>
 </div>
 
@@ -17,25 +18,25 @@
             <div class="card-body">
                 <div class="row align-items-center">
                     <div class="col-md-8">
-                        <h5 class="card-title">Student Information</h5>
+                        <h5 class="card-title">Welcome, {{ student.user.get_full_name }}!</h5>
                         <p class="card-text">
-                            <strong>Name:</strong> {{ student.user.get_full_name }}<br>
                             <strong>Student ID:</strong> {{ student.student_id }}<br>
                             <strong>Class:</strong> {{ student.class_name }} - {{ student.section }}<br>
                             <strong>Roll No:</strong> {{ student.roll_number }}<br>
-                            <strong>Email:</strong> {{ student.user.email }}
+                            <strong>Email:</strong> {{ student.user.email }}<br>
+                            <strong>Admission Date:</strong> {{ student.admission_date|date:"M d, Y" }}
                         </p>
                     </div>
                     <div class="col-md-4 text-center">
                         <div class="profile-picture mb-3">
                             {% if student.user.profile_picture %}
-                                <img src="{{ student.user.profile_picture.url }}" alt="Profile Picture" 
-                                     class="img-fluid rounded-circle" 
+                                <img src="{{ student.user.profile_picture.url }}" alt="Profile Picture"
+                                     class="img-fluid rounded-circle"
                                      style="width: 100px; height: 100px; object-fit: cover;">
                             {% else %}
-                                <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                                <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center"
                                      style="width: 100px; height: 100px;">
-                                    <i class="fas fa-user fa-2x"></i>
+                                    <i class="fas fa-user-graduate fa-2x"></i>
                                 </div>
                             {% endif %}
                         </div>
@@ -53,18 +54,20 @@
     <div class="col-md-3">
         <div class="card text-center dashboard-card">
             <div class="card-body">
-                <h3><i class="fas fa-chart-line text-primary"></i></h3>
-                <h5>Overall Percentage</h5>
-                <h2 class="text-primary">85%</h2>
+                <h3><i class="fas fa-calendar-check text-success"></i></h3>
+                <h5>Attendance</h5>
+                <h2 class="text-success">{{ attendance_percentage }}%</h2>
+                <small class="text-muted">{{ attendance_count }}/{{ total_days }} days</small>
             </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card text-center dashboard-card">
             <div class="card-body">
-                <h3><i class="fas fa-calendar-check text-success"></i></h3>
-                <h5>Attendance</h5>
-                <h2 class="text-success">{{ attendance_percentage }}%</h2>
+                <h3><i class="fas fa-chart-line text-primary"></i></h3>
+                <h5>Overall Grade</h5>
+                <h2 class="text-primary">A</h2>
+                <small class="text-muted">Excellent</small>
             </div>
         </div>
     </div>
@@ -74,109 +77,256 @@
                 <h3><i class="fas fa-book text-info"></i></h3>
                 <h5>Books Issued</h5>
                 <h2 class="text-info">{{ total_books }}</h2>
+                <small class="text-muted">Currently reading</small>
             </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card text-center dashboard-card">
             <div class="card-body">
-                <h3><i class="fas fa-money-bill-wave text-warning"></i></h3>
+                <h3><i class="fas fa-money-bill-wave {% if pending_fees > 0 %}text-warning{% else %}text-success{% endif %}"></i></h3>
                 <h5>Fee Status</h5>
-                <h2 class="text-warning">Pending</h2>
+                <h2 class="{% if pending_fees > 0 %}text-warning{% else %}text-success{% endif %}">
+                    {% if pending_fees > 0 %}{{ pending_fees }} Pending{% else %}Paid{% endif %}
+                </h2>
+                <small class="text-muted">{{ paid_fees }}/{{ total_fees }} paid</small>
             </div>
         </div>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-6">
-        <!-- Quick Actions -->
+    <!-- Quick Actions -->
+    <div class="col-md-4">
         <div class="card mb-4">
-            <div class="card-header">
+            <div class="card-header bg-primary text-white">
                 <h5 class="mb-0"><i class="fas fa-rocket"></i> Quick Access</h5>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <a href="{% url 'class_routine' %}" class="btn btn-outline-primary w-100">
-                            <i class="fas fa-calendar-alt"></i> Class Routine
-                        </a>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <a href="{% url 'results' %}" class="btn btn-outline-success w-100">
-                            <i class="fas fa-chart-line"></i> My Results
-                        </a>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <a href="{% url 'attendance' %}" class="btn btn-outline-info w-100">
-                            <i class="fas fa-calendar-check"></i> My Attendance
-                        </a>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <a href="{% url 'library' %}" class="btn btn-outline-warning w-100">
-                            <i class="fas fa-book"></i> Library
-                        </a>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <a href="{% url 'fee_payment' %}" class="btn btn-outline-danger w-100">
-                            <i class="fas fa-credit-card"></i> Fee Payment
-                        </a>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <a href="{% url 'notice_board' %}" class="btn btn-outline-secondary w-100">
-                            <i class="fas fa-bullhorn"></i> Notices
-                        </a>
-                    </div>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'class_routine' %}" class="btn btn-outline-primary text-start">
+                        <i class="fas fa-calendar-alt me-2"></i> Class Routine
+                    </a>
+                    <a href="{% url 'results' %}" class="btn btn-outline-success text-start">
+                        <i class="fas fa-chart-line me-2"></i> My Results
+                    </a>
+                    <a href="{% url 'attendance' %}" class="btn btn-outline-info text-start">
+                        <i class="fas fa-calendar-check me-2"></i> My Attendance
+                    </a>
+                    <a href="{% url 'library' %}" class="btn btn-outline-warning text-start">
+                        <i class="fas fa-book me-2"></i> Library
+                    </a>
+                    <a href="{% url 'fee_payment' %}" class="btn btn-outline-danger text-start">
+                        <i class="fas fa-credit-card me-2"></i> Fee Payment
+                    </a>
+                    <a href="{% url 'notice_board' %}" class="btn btn-outline-secondary text-start">
+                        <i class="fas fa-bullhorn me-2"></i> Notices
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <!-- Recent Notices -->
+    <!-- Recent Notices -->
+    <div class="col-md-4">
         <div class="card mb-4">
-            <div class="card-header">
+            <div class="card-header bg-warning text-white">
                 <h5 class="mb-0"><i class="fas fa-bullhorn"></i> Recent Notices</h5>
             </div>
             <div class="card-body">
                 {% for notice in recent_notices %}
                 <div class="notice-item border-bottom pb-2 mb-2">
                     <h6 class="text-primary">{{ notice.title }}</h6>
-                    <p class="small text-muted mb-1">{{ notice.content|truncatewords:15 }}</p>
-                    <small class="text-muted">
-                        <i class="fas fa-calendar"></i> {{ notice.created_at|date:"M d, Y" }}
-                    </small>
+                    <p class="small text-muted mb-1">{{ notice.content|truncatewords:10 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar"></i> {{ notice.created_at|date:"M d" }}
+                        </small>
+                        <span class="badge bg-info">{{ notice.target_audience }}</span>
+                    </div>
                 </div>
                 {% empty %}
-                <p class="text-muted mb-0">No recent notices.</p>
+                <p class="text-muted text-center mb-0">No recent notices.</p>
                 {% endfor %}
                 <div class="text-center mt-3">
-                    <a href="{% url 'notice_board' %}" class="btn btn-sm btn-outline-primary">View All Notices</a>
+                    <a href="{% url 'notice_board' %}" class="btn btn-sm btn-outline-warning">View All Notices</a>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Recent Activities -->
+    <!-- Recent Results -->
+    <div class="col-md-4">
         <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-bell"></i> Recent Activities</h5>
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-line"></i> Recent Results</h5>
             </div>
             <div class="card-body">
-                <div class="activity-list">
-                    <div class="activity-item border-bottom pb-2 mb-2">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <span>You logged in successfully</span>
-                        <small class="text-muted d-block">Just now</small>
+                {% for result in recent_results %}
+                <div class="result-item border-bottom pb-2 mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">{{ result.subject.name }}</h6>
+                            <small class="text-muted">{{ result.exam_name }}</small>
+                        </div>
+                        <div class="text-end">
+                            <strong class="text-primary">{{ result.marks }}/{{ result.total_marks }}</strong>
+                            <br>
+                            <span class="badge bg-{% if result.grade == 'A+' %}success{% elif result.grade == 'A' %}primary{% elif result.grade == 'B' %}warning{% else %}danger{% endif %}">
+                                {{ result.grade }}
+                            </span>
+                        </div>
                     </div>
-                    <div class="activity-item border-bottom pb-2 mb-2">
-                        <i class="fas fa-book text-primary me-2"></i>
-                        <span>New assignment posted in Mathematics</span>
-                        <small class="text-muted d-block">2 hours ago</small>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center mb-0">No results published yet.</p>
+                {% endfor %}
+                <div class="text-center mt-3">
+                    <a href="{% url 'results' %}" class="btn btn-sm btn-outline-success">View All Results</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Today's Schedule -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-calendar-day"></i> Today's Schedule</h5>
+            </div>
+            <div class="card-body">
+                {% with today=6 %}
+                    {% with today_name="Friday" %}
+                    <h6 class="text-muted">{{ today_name }}, {% now "F d, Y" }}</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Subject</th>
+                                    <th>Teacher</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>8:00 - 9:00</td>
+                                    <td>Mathematics</td>
+                                    <td>Mr. John Smith</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>9:00 - 10:00</td>
+                                    <td>Science</td>
+                                    <td>Ms. Sarah Johnson</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>11:00 - 12:00</td>
+                                    <td>English</td>
+                                    <td>Ms. Emily Brown</td>
+                                    <td><span class="badge bg-primary">Upcoming</span></td>
+                                </tr>
+                                <tr>
+                                    <td>12:00 - 1:00</td>
+                                    <td>Social Studies</td>
+                                    <td>Mr. David Wilson</td>
+                                    <td><span class="badge bg-secondary">Later</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="activity-item">
-                        <i class="fas fa-chart-line text-info me-2"></i>
-                        <span>Mid-term results published</span>
-                        <small class="text-muted d-block">3 days ago</small>
+                    {% endwith %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Events -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-purple text-white">
+                <h5 class="mb-0"><i class="fas fa-bell"></i> Upcoming Events</h5>
+            </div>
+            <div class="card-body">
+                <div class="event-list">
+                    <div class="event-item d-flex align-items-center mb-3">
+                        <div class="event-date bg-primary text-white text-center me-3 rounded" style="width: 50px; height: 50px; line-height: 1.2; padding: 5px;">
+                            <strong>15</strong><br>
+                            <small>DEC</small>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Annual Sports Day</h6>
+                            <small class="text-muted">School Ground • 9:00 AM</small>
+                        </div>
+                    </div>
+                    <div class="event-item d-flex align-items-center mb-3">
+                        <div class="event-date bg-success text-white text-center me-3 rounded" style="width: 50px; height: 50px; line-height: 1.2; padding: 5px;">
+                            <strong>20</strong><br>
+                            <small>DEC</small>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Science Exhibition</h6>
+                            <small class="text-muted">Science Lab • 10:00 AM</small>
+                        </div>
+                    </div>
+                    <div class="event-item d-flex align-items-center">
+                        <div class="event-date bg-warning text-white text-center me-3 rounded" style="width: 50px; height: 50px; line-height: 1.2; padding: 5px;">
+                            <strong>25</strong><br>
+                            <small>DEC</small>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Final Term Exams</h6>
+                            <small class="text-muted">All Classes • Starts</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Progress -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-orange text-white">
+                <h5 class="mb-0"><i class="fas fa-tasks"></i> Academic Progress</h5>
+            </div>
+            <div class="card-body">
+                <div class="progress-section">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Mathematics</span>
+                        <span>92%</span>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 92%"></div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Science</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 85%"></div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>English</span>
+                        <span>78%</span>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: 78%"></div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Social Studies</span>
+                        <span>88%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 88%"></div>
                     </div>
                 </div>
             </div>
@@ -184,3 +334,37 @@
     </div>
 </div>
 {% endblock %}
+
+<style>
+.bg-purple {
+    background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%) !important;
+}
+
+.bg-orange {
+    background: linear-gradient(135deg, #fd7e14 0%, #e74c3c 100%) !important;
+}
+
+.dashboard-card {
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.event-date {
+    flex-shrink: 0;
+}
+
+.notice-item, .result-item {
+    transition: background-color 0.3s ease;
+}
+
+.notice-item:hover, .result-item:hover {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 10px;
+    margin: -10px;
+}
+</style>

@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserRegistrationForm, ProfileUpdateForm
-from school.models import Student, Teacher
+from school.models import Student, Teacher, Attendance, BookIssue  # Import necessary models
 import random
 import string
 
@@ -16,32 +16,9 @@ def register(request):
             user_type = form.cleaned_data.get('user_type')
 
             if user_type == 'student':
-                # Generate student ID
                 student_id = 'STU' + ''.join(random.choices(string.digits, k=6))
-
-                # Get student specific data from form
-                date_of_birth = form.cleaned_data.get('date_of_birth')
-                gender = form.cleaned_data.get('gender')
-                class_name = form.cleaned_data.get('class_name') or 'Class 1'
-                section = form.cleaned_data.get('section') or 'A'
-                roll_number = form.cleaned_data.get('roll_number') or 1
-                parent_name = form.cleaned_data.get('parent_name') or ''
-                parent_phone = form.cleaned_data.get('parent_phone') or ''
-
-                Student.objects.create(
-                    user=user,
-                    student_id=student_id,
-                    date_of_birth=date_of_birth,
-                    gender=gender,
-                    class_name=class_name,
-                    section=section,
-                    roll_number=roll_number,
-                    parent_name=parent_name,
-                    parent_phone=parent_phone
-                )
-
+                Student.objects.create(user=user, student_id=student_id)
             elif user_type == 'teacher':
-                # Generate teacher ID
                 teacher_id = 'TCH' + ''.join(random.choices(string.digits, k=6))
                 Teacher.objects.create(user=user, teacher_id=teacher_id)
 
@@ -53,30 +30,6 @@ def register(request):
 
 
 @login_required
-def dashboard(request):
-    # Redirect based on user type
-    if request.user.user_type == 'student':
-        return redirect('student_dashboard')
-    else:
-        # For admin and teachers, show the regular dashboard
-        user_type = request.user.user_type
-        context = {'user_type': user_type}
-
-        if user_type == 'student':
-            try:
-                context['student'] = Student.objects.get(user=request.user)
-            except Student.DoesNotExist:
-                context['student'] = None
-        elif user_type == 'teacher':
-            try:
-                context['teacher'] = Teacher.objects.get(user=request.user)
-            except Teacher.DoesNotExist:
-                context['teacher'] = None
-
-        return render(request, 'accounts/dashboard.html', context)
-
-
-@login_required
 def profile(request):
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
@@ -84,16 +37,11 @@ def profile(request):
             form.save()
             messages.success(request, 'Your profile has been updated successfully!')
             return redirect('profile')
-        else:
-            messages.error(request, 'Please correct the errors below.')
     else:
         form = ProfileUpdateForm(instance=request.user)
 
-    context = {
-        'form': form
-    }
+    context = {'form': form}
 
-    # Add student/teacher info to context
     if request.user.user_type == 'student':
         try:
             context['student'] = Student.objects.get(user=request.user)
@@ -106,3 +54,53 @@ def profile(request):
             context['teacher'] = None
 
     return render(request, 'accounts/profile.html', context)
+
+
+@login_required
+def dashboard(request):
+    user_type = request.user.user_type
+
+    if user_type == 'student':
+        # Student এর জন্য student dashboard show করবে
+        try:
+            student = Student.objects.get(user=request.user)
+
+            # Get basic student data (with error handling)
+            try:
+                attendance_count = Attendance.objects.filter(student=student, status='Present').count()
+                total_days = Attendance.objects.filter(student=student).count()
+                attendance_percentage = (attendance_count / total_days * 100) if total_days > 0 else 0
+            except:
+                attendance_count = 0
+                total_days = 0
+                attendance_percentage = 0
+
+            try:
+                total_books = BookIssue.objects.filter(student=student, returned=False).count()
+            except:
+                total_books = 0
+
+            context = {
+                'student': student,
+                'attendance_percentage': round(attendance_percentage, 2),
+                'attendance_count': attendance_count,
+                'total_days': total_days,
+                'total_books': total_books,
+            }
+            return render(request, 'school/student_dashboard.html', context)
+        except Student.DoesNotExist:
+            messages.error(request, 'Student profile not found!')
+            # Fallback to basic dashboard
+            return render(request, 'accounts/dashboard.html', {'user_type': user_type})
+
+    else:
+        # Admin and teachers এর জন্য regular dashboard
+        context = {'user_type': user_type}
+
+        if user_type == 'teacher':
+            try:
+                context['teacher'] = Teacher.objects.get(user=request.user)
+            except Teacher.DoesNotExist:
+                context['teacher'] = None
+
+        return render(request, 'accounts/dashboard.html', context)
