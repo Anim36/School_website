@@ -1,0 +1,8 @@
+*.pyc
+__pycache__/
+*.sqlite3
+../../PycharmProjects/school_management/tests/.env
+media/
+staticfiles/
+.DS_Store
+*.log
