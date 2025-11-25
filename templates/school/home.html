@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - School Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="hero-section bg-primary text-white p-5 rounded">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-4 fw-bold">Welcome to {% if school_info %}{{ school_info.name }}{% else %}Our School{% endif %}</h1>
+                    <p class="lead">Excellence in Education Since 2017</p>
+                    <p>Where we nurture young minds to become future leaders through quality education and holistic development.</p>
+                    {% if not user.is_authenticated %}
+                    <div class="mt-4">
+                        <a href="{% url 'register' %}" class="btn btn-light btn-lg me-3">Get Started</a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">Login</a>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 text-center">
+                    <img src="{% if school_info and school_info.logo %}{{ school_info.logo.url }}{% else %}/static/images/Scl_logo.jpg{% endif %}"
+                         alt="School Logo" class="img-fluid" style="max-height: 200px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h4 class="mb-0"><i class="fas fa-bullhorn"></i> Latest Notices</h4>
+            </div>
+            <div class="card-body">
+                {% for notice in notices %}
+                <div class="notice-item border-bottom pb-3 mb-3">
+                    <h5 class="text-primary">{{ notice.title }}</h5>
+                    <p class="text-muted">{{ notice.content|truncatewords:30 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar"></i> {{ notice.created_at|date:"F d, Y" }}
+                        </small>
+                        <span class="badge bg-info">{{ notice.target_audience }}</span>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">No notices available at the moment.</p>
+                {% endfor %}
+                <div class="text-center mt-3">
+                    <a href="{% url 'notice_board' %}" class="btn btn-outline-primary">View All Notices</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Quick Links</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a href="{% url 'class_routine' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-calendar-alt me-2"></i>Class Routine
+                    </a>
+                    <a href="{% url 'results' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-chart-line me-2"></i>Exam Results
+                    </a>
+                    <a href="{% url 'library' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-book me-2"></i>Library
+                    </a>
+                    <a href="{% url 'fee_payment' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-credit-card me-2"></i>Fee Payment
+                    </a>
+                    <a href="{% url 'online_admission' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user-graduate me-2"></i>Online Admission
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-clock"></i> School Hours</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Monday - Friday:</strong> 8:00 AM - 3:00 PM</p>
+                <p class="mb-1"><strong>Saturday:</strong> 8:00 AM - 1:00 PM</p>
+                <p class="mb-0"><strong>Sunday:</strong> Closed</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card text-center border-0 shadow-sm">
+            <div class="card-body">
+                <div class="feature-icon bg-primary text-white rounded-circle mx-auto mb-3" style="width: 60px; height: 60px; line-height: 60px;">
+                    <i class="fas fa-users fa-lg"></i>
+                </div>
+                <h5>Student Portal</h5>
+                <p class="text-muted">Access your academic information and resources</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card text-center border-0 shadow-sm">
+            <div class="card-body">
+                <div class="feature-icon bg-success text-white rounded-circle mx-auto mb-3" style="width: 60px; height: 60px; line-height: 60px;">
+                    <i class="fas fa-chalkboard-teacher fa-lg"></i>
+                </div>
+                <h5>Teacher Portal</h5>
+                <p class="text-muted">Manage classes and student progress</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card text-center border-0 shadow-sm">
+            <div class="card-body">
+                <div class="feature-icon bg-warning text-white rounded-circle mx-auto mb-3" style="width: 60px; height: 60px; line-height: 60px;">
+                    <i class="fas fa-graduation-cap fa-lg"></i>
+                </div>
+                <h5>Online Admission</h5>
+                <p class="text-muted">Apply for admission online</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0"><i class="fas fa-chart-line"></i> Why Choose Our School?</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                        <h5>Qualified Teachers</h5>
+                        <p>Our experienced and dedicated teaching staff ensures quality education.</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <i class="fas fa-flask fa-3x text-success mb-3"></i>
+                        <h5>Modern Facilities</h5>
+                        <p>State-of-the-art laboratories and libraries for enhanced learning.</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+                        <h5>Excellent Results</h5>
+                        <p>Consistent outstanding academic performance and achievements.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Notice - School Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0"><i class="fas fa-plus"></i> Add New Notice</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="id_title" class="form-label">Notice Title *</label>
+                        <input type="text" name="title" class="form-control" id="id_title"
+                               value="{{ form.title.value|default:'' }}" required
+                               placeholder="Enter notice title">
+                        {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_content" class="form-label">Notice Content *</label>
+                        <textarea name="content" class="form-control" id="id_content"
+                                  rows="6" required
+                                  placeholder="Enter notice content">{{ form.content.value|default:'' }}</textarea>
+                        {% if form.content.errors %}
+                            <div class="text-danger">{{ form.content.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_target_audience" class="form-label">Target Audience *</label>
+                        <select name="target_audience" class="form-select" id="id_target_audience" required>
+                            <option value="">Select Target Audience</option>
+                            <option value="All" {% if form.target_audience.value == 'All' %}selected{% endif %}>All</option>
+                            <option value="Students" {% if form.target_audience.value == 'Students' %}selected{% endif %}>Students</option>
+                            <option value="Teachers" {% if form.target_audience.value == 'Teachers' %}selected{% endif %}>Teachers</option>
+                            <option value="Parents" {% if form.target_audience.value == 'Parents' %}selected{% endif %}>Parents</option>
+                        </select>
+                        {% if form.target_audience.errors %}
+                            <div class="text-danger">{{ form.target_audience.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'notice_board' %}" class="btn btn-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Publish Notice</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

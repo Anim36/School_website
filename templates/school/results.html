@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Results - School Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-chart-line"></i> Results & Performance</h2>
+    {% if user.user_type == 'admin' or user.user_type == 'teacher' %}
+    <a href="#" class="btn btn-primary"><i class="fas fa-plus"></i> Publish Result</a>
+    {% endif %}
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3><i class="fas fa-percentage text-primary"></i></h3>
+                <h5>Overall Percentage</h5>
+                <h2 class="text-primary">85%</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3><i class="fas fa-trophy text-warning"></i></h3>
+                <h5>Grade</h5>
+                <h2 class="text-warning">A+</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3><i class="fas fa-ranking-star text-success"></i></h3>
+                <h5>Class Rank</h5>
+                <h2 class="text-success">5</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Exam Results</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Exam</th>
+                        <th>Marks Obtained</th>
+                        <th>Total Marks</th>
+                        <th>Percentage</th>
+                        <th>Grade</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result.subject.name }}</td>
+                        <td>{{ result.exam_name }}</td>
+                        <td>{{ result.marks }}</td>
+                        <td>{{ result.total_marks }}</td>
+                        <td>
+                            {% widthratio result.marks result.total_marks 100 as percentage %}
+                            {{ percentage }}%
+                        </td>
+                        <td>
+                            <span class="badge bg-{% if result.grade == 'A+' %}success{% elif result.grade == 'A' %}primary{% elif result.grade == 'B' %}warning{% else %}danger{% endif %}">
+                                {{ result.grade }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if result.grade == 'A+' %}
+                            <span class="text-success">Excellent</span>
+                            {% elif result.grade == 'A' %}
+                            <span class="text-primary">Very Good</span>
+                            {% elif result.grade == 'B' %}
+                            <span class="text-warning">Good</span>
+                            {% else %}
+                            <span class="text-danger">Needs Improvement</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No results published yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Performance Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="performance-summary">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Mathematics:</span>
+                        <div>
+                            <span class="fw-bold text-primary">92/100</span>
+                            <span class="badge bg-success ms-2">A+</span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Science:</span>
+                        <div>
+                            <span class="fw-bold text-primary">85/100</span>
+                            <span class="badge bg-primary ms-2">A</span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>English:</span>
+                        <div>
+                            <span class="fw-bold text-primary">78/100</span>
+                            <span class="badge bg-warning ms-2">B</span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Social Studies:</span>
+                        <div>
+                            <span class="fw-bold text-primary">88/100</span>
+                            <span class="badge bg-primary ms-2">A</span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Computer Science:</span>
+                        <div>
+                            <span class="fw-bold text-primary">95/100</span>
+                            <span class="badge bg-success ms-2">A+</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Result Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-outline-primary">Download Marksheet</a>
+                    <a href="#" class="btn btn-outline-success">Print Result</a>
+                    <a href="#" class="btn btn-outline-info">View Detailed Report</a>
+                    <a href="#" class="btn btn-outline-warning">Request Re-evaluation</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

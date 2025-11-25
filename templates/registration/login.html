@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - School Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="card-title mb-0 text-center"><i class="fas fa-sign-in-alt"></i> Login to Your Account</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Invalid credentials!</strong> Please check your username and password.
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" id="id_username" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" id="id_password" required>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="#" class="text-decoration-none">Forgot your password?</a>
+                </div>
+
+                <hr>
+
+                <div class="text-center">
+                    <p class="mb-0">Don't have an account?
+                        <a href="{% url 'register' %}" class="text-decoration-none">Register here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body text-center">
+                <h6>Login As:</h6>
+                <div class="btn-group w-100 mt-2">
+                    <button class="btn btn-outline-primary">Student</button>
+                    <button class="btn btn-outline-success">Teacher</button>
+                    <!--<button class="btn btn-outline-info">Parent</button>
+                    <button class="btn btn-outline-warning">Admin</button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

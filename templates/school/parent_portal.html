@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block title %}Parent Portal - School Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-user-friends"></i> Parent Portal</h2>
+    <div class="btn-group">
+        <a href="#" class="btn btn-outline-primary"><i class="fas fa-sync-alt"></i> Refresh</a>
+        <a href="#" class="btn btn-outline-success"><i class="fas fa-download"></i> Report</a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3><i class="fas fa-user-graduate text-primary"></i></h3>
+                <h5>My Children</h5>
+                <h2 class="text-primary">2</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3><i class="fas fa-chart-line text-success"></i></h3>
+                <h5>Average Performance</h5>
+                <h2 class="text-success">85%</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3><i class="fas fa-calendar-check text-info"></i></h3>
+                <h5>Attendance</h5>
+                <h2 class="text-info">96%</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">My Children</h5>
+            </div>
+            <div class="card-body">
+                <div class="children-list">
+                    <div class="child-item border-bottom pb-3 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="child-avatar bg-primary text-white rounded-circle me-3" style="width: 50px; height: 50px; line-height: 50px; text-align: center;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Rahul Sharma</h6>
+                                <p class="mb-0 text-muted">Class 8-A | Roll No: 15</p>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                    <div class="child-item">
+                        <div class="d-flex align-items-center">
+                            <div class="child-avatar bg-success text-white rounded-circle me-3" style="width: 50px; height: 50px; line-height: 50px; text-align: center;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Priya Sharma</h6>
+                                <p class="mb-0 text-muted">Class 5-B | Roll No: 08</p>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Quick Links</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'fee_payment' %}" class="btn btn-outline-primary">Fee Payment</a>
+                    <a href="{% url 'results' %}" class="btn btn-outline-success">View Results</a>
+                    <a href="{% url 'attendance' %}" class="btn btn-outline-info">Attendance</a>
+                    <a href="{% url 'notice_board' %}" class="btn btn-outline-warning">School Notices</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Children's Performance Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Child Name</th>
+                                <th>Class</th>
+                                <th>Recent Exam</th>
+                                <th>Marks</th>
+                                <th>Grade</th>
+                                <th>Attendance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rahul Sharma</td>
+                                <td>8-A</td>
+                                <td>Term 1</td>
+                                <td>425/500</td>
+                                <td><span class="badge bg-success">A+</span></td>
+                                <td>95%</td>
+                                <td><span class="badge bg-success">Excellent</span></td>
+                            </tr>
+                            <tr>
+                                <td>Priya Sharma</td>
+                                <td>5-B</td>
+                                <td>Term 1</td>
+                                <td>380/500</td>
+                                <td><span class="badge bg-primary">A</span></td>
+                                <td>92%</td>
+                                <td><span class="badge bg-primary">Good</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Upcoming Events</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="event-item border-bottom pb-2 mb-2">
+                            <h6 class="text-primary">Parent-Teacher Meeting</h6>
+                            <p class="mb-1 text-muted"><i class="fas fa-calendar"></i> March 15, 2024</p>
+                            <small>10:00 AM - School Auditorium</small>
+                        </div>
+                        <div class="event-item border-bottom pb-2 mb-2">
+                            <h6 class="text-success">Annual Sports Day</h6>
+                            <p class="mb-1 text-muted"><i class="fas fa-calendar"></i> March 20, 2024</p>
+                            <small>8:00 AM - School Ground</small>
+                        </div>
+                        <div class="event-item">
+                            <h6 class="text-info">Science Exhibition</h6>
+                            <p class="mb-1 text-muted"><i class="fas fa-calendar"></i> March 25, 2024</p>
+                            <small>9:00 AM - Science Lab</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Recent Communications</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="message-item border-bottom pb-2 mb-2">
+                            <h6 class="text-warning">Fee Reminder</h6>
+                            <p class="mb-1">Quarterly fee due on March 10, 2024</p>
+                            <small class="text-muted">2 days ago</small>
+                        </div>
+                        <div class="message-item border-bottom pb-2 mb-2">
+                            <h6 class="text-primary">PTM Notification</h6>
+                            <p class="mb-1">Parent-teacher meeting scheduled</p>
+                            <small class="text-muted">1 week ago</small>
+                        </div>
+                        <div class="message-item">
+                            <h6 class="text-success">Result Published</h6>
+                            <p class="mb-1">Term 1 results are now available</p>
+                            <small class="text-muted">2 weeks ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Contact Class Teachers</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="teacher-contact border rounded p-3 mb-3">
+                    <h6>Rahul Sharma - Class 8-A</h6>
+                    <p class="mb-1"><strong>Class Teacher:</strong> Mrs. Sunita Patel</p>
+                    <p class="mb-1"><strong>Email:</strong> sunita.patel@school.edu</p>
+                    <p class="mb-0"><strong>Phone:</strong> +91 9876543210</p>
+                    <button class="btn btn-sm btn-primary mt-2">Send Message</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="teacher-contact border rounded p-3 mb-3">
+                    <h6>Priya Sharma - Class 5-B</h6>
+                    <p class="mb-1"><strong>Class Teacher:</strong> Mr. Rajesh Kumar</p>
+                    <p class="mb-1"><strong>Email:</strong> rajesh.kumar@school.edu</p>
+                    <p class="mb-0"><strong>Phone:</strong> +91 9876543211</p>
+                    <button class="btn btn-sm btn-primary mt-2">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

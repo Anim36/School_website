@@ -1,0 +1,185 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>School Management System - Admin Dashboard</h1>
+            <p>Welcome to the administration panel. Use the navigation to manage different aspects of the school system.</p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ students_count }}</h4>
+                            <p>Total Students</p>
+                        </div>
+                        <div>
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="/admin/school/student/" class="text-white">View All</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ teachers_count }}</h4>
+                            <p>Total Teachers</p>
+                        </div>
+                        <div>
+                            <i class="fas fa-chalkboard-teacher fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="/admin/school/teacher/" class="text-white">View All</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ classes_count }}</h4>
+                            <p>Total Classes</p>
+                        </div>
+                        <div>
+                            <i class="fas fa-book fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="/admin/school/class/" class="text-white">View All</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ notices_count }}</h4>
+                            <p>Active Notices</p>
+                        </div>
+                        <div>
+                            <i class="fas fa-bullhorn fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="/admin/school/notice/" class="text-white">View All</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Students</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Class</th>
+                                    <th>Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in recent_students %}
+                                <tr>
+                                    <td>{{ student.student_id }}</td>
+                                    <td>{{ student.user.get_full_name }}</td>
+                                    <td>{{ student.class_name }}</td>
+                                    <td>{{ student.admission_date|date:"M d, Y" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No students found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Notices</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for notice in recent_notices %}
+                        <div class="list-group-item">
+                            <h6 class="mb-1">{{ notice.title }}</h6>
+                            <p class="mb-1 text-muted">{{ notice.content|truncatewords:10 }}</p>
+                            <small class="text-muted">{{ notice.created_at|date:"M d, Y" }} - {{ notice.target_audience }}</small>
+                        </div>
+                        {% empty %}
+                        <div class="list-group-item text-center">
+                            No notices found
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="/admin/school/student/add/" class="btn btn-primary w-100">
+                                <i class="fas fa-user-plus"></i> Add Student
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="/admin/school/teacher/add/" class="btn btn-success w-100">
+                                <i class="fas fa-chalkboard-teacher"></i> Add Teacher
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="/admin/school/notice/add/" class="btn btn-info w-100">
+                                <i class="fas fa-bullhorn"></i> Add Notice
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="/admin/school/class/add/" class="btn btn-warning w-100">
+                                <i class="fas fa-book"></i> Add Class
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

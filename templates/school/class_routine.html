@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Class Routine - School Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar-alt"></i> Class Routine & Schedule</h2>
+    {% if user.user_type == 'admin' or user.user_type == 'teacher' %}
+    <a href="#" class="btn btn-primary"><i class="fas fa-plus"></i> Add Routine</a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Weekly Class Schedule</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Time/Day</th>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Saturday</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="fw-bold">8:00 - 8:45</td>
+                        <td>Mathematics<br><small>Mr. Sharma</small></td>
+                        <td>Science<br><small>Mrs. Patel</small></td>
+                        <td>English<br><small>Ms. Davis</small></td>
+                        <td>Mathematics<br><small>Mr. Sharma</small></td>
+                        <td>Physics<br><small>Dr. Kumar</small></td>
+                        <td>Chemistry<br><small>Mrs. Gupta</small></td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">8:45 - 9:30</td>
+                        <td>Science<br><small>Mrs. Patel</small></td>
+                        <td>Mathematics<br><small>Mr. Sharma</small></td>
+                        <td>History<br><small>Mr. Khan</small></td>
+                        <td>Biology<br><small>Dr. Singh</small></td>
+                        <td>English<br><small>Ms. Davis</small></td>
+                        <td>Mathematics<br><small>Mr. Sharma</small></td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">9:30 - 10:15</td>
+                        <td>English<br><small>Ms. Davis</small></td>
+                        <td>Physics<br><small>Dr. Kumar</small></td>
+                        <td>Mathematics<br><small>Mr. Sharma</small></td>
+                        <td>Chemistry<br><small>Mrs. Gupta</small></td>
+                        <td>Science<br><small>Mrs. Patel</small></td>
+                        <td>Physical Education</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">10:15 - 10:30</td>
+                        <td colspan="6" class="text-center bg-light"><strong>BREAK</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">10:30 - 11:15</td>
+                        <td>Geography<br><small>Mr. Joshi</small></td>
+                        <td>English<br><small>Ms. Davis</small></td>
+                        <td>Science<br><small>Mrs. Patel</small></td>
+                        <td>Mathematics<br><small>Mr. Sharma</small></td>
+                        <td>Computer<br><small>Mr. Verma</small></td>
+                        <td>Art & Craft</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">11:15 - 12:00</td>
+                        <td>Computer<br><small>Mr. Verma</small></td>
+                        <td>Biology<br><small>Dr. Singh</small></td>
+                        <td>Physics<br><small>Dr. Kumar</small></td>
+                        <td>English<br><small>Ms. Davis</small></td>
+                        <td>Mathematics<br><small>Mr. Sharma</small></td>
+                        <td>Music</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Today's Classes</h5>
+            </div>
+            <div class="card-body">
+                <div class="class-item border-bottom pb-2 mb-2">
+                    <h6 class="text-primary">Mathematics</h6>
+                    <p class="mb-1"><strong>Time:</strong> 8:00 AM - 8:45 AM</p>
+                    <p class="mb-1"><strong>Teacher:</strong> Mr. Sharma</p>
+                </div>
+                <div class="class-item border-bottom pb-2 mb-2">
+                    <h6 class="text-success">Science</h6>
+                    <p class="mb-1"><strong>Time:</strong> 8:45 AM - 9:30 AM</p>
+                    <p class="mb-1"><strong>Teacher:</strong> Mrs. Patel</p>
+                </div>
+                <div class="class-item border-bottom pb-2 mb-2">
+                    <h6 class="text-info">English</h6>
+                    <p class="mb-1"><strong>Time:</strong> 9:30 AM - 10:15 AM</p>
+                    <p class="mb-1"><strong>Teacher:</strong> Ms. Davis</p>
+                </div>
+                <div class="class-item">
+                    <h6 class="text-warning">Geography</h6>
+                    <p class="mb-1"><strong>Time:</strong> 10:30 AM - 11:15 AM</p>
+                    <p class="mb-1"><strong>Teacher:</strong> Mr. Joshi</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="#" class="btn btn-outline-primary">Download Routine</a>
+                    <a href="#" class="btn btn-outline-success">Print Routine</a>
+                    {% if user.user_type == 'teacher' %}
+                    <a href="#" class="btn btn-outline-info">My Schedule</a>
+                    {% endif %}
+                    <a href="#" class="btn btn-outline-warning">Request Change</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

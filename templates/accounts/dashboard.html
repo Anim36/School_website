@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - School Management System{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+        <p class="text-muted">Welcome back, {{ user.get_full_name|default:user.username }}!</p>
+    </div>
+</div>
+
+<!-- User Info Card -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="card-title">User Information</h5>
+                        <p class="card-text">
+                            <strong>Name:</strong> {{ user.get_full_name }}<br>
+                            <strong>Username:</strong> {{ user.username }}<br>
+                            <strong>Email:</strong> {{ user.email }}<br>
+                            <strong>Role:</strong> <span class="badge bg-primary">{{ user.get_user_type_display }}</span>
+                        </p>
+                        <!-- ... rest of the user info ... -->
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="profile-picture mb-3">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" alt="Profile Picture"
+                                     class="img-fluid rounded-circle"
+                                     style="width: 100px; height: 100px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center"
+                                     style="width: 100px; height: 100px;">
+                                    <i class="fas fa-user fa-2x"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <p class="mt-2 mb-0">{{ user.get_user_type_display }}</p>
+                        <a href="{% url 'profile' %}" class="btn btn-sm btn-outline-primary mt-2">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-4">
+    {% if user.user_type == 'student' %}
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-chart-line text-primary"></i></h3>
+                <h5>Overall Percentage</h5>
+                <h2 class="text-primary">85%</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-calendar-check text-success"></i></h3>
+                <h5>Attendance</h5>
+                <h2 class="text-success">96%</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-book text-info"></i></h3>
+                <h5>Subjects</h5>
+                <h2 class="text-info">8</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-trophy text-warning"></i></h3>
+                <h5>Class Rank</h5>
+                <h2 class="text-warning">5</h2>
+            </div>
+        </div>
+    </div>
+    {% elif user.user_type == 'teacher' %}
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-users text-primary"></i></h3>
+                <h5>Total Students</h5>
+                <h2 class="text-primary">45</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-book-open text-success"></i></h3>
+                <h5>Subjects</h5>
+                <h2 class="text-success">3</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-chalkboard text-info"></i></h3>
+                <h5>Classes</h5>
+                <h2 class="text-info">4</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-tasks text-warning"></i></h3>
+                <h5>Assignments</h5>
+                <h2 class="text-warning">12</h2>
+            </div>
+        </div>
+    </div>
+    {% elif user.user_type == 'admin' %}
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-users text-primary"></i></h3>
+                <h5>Total Students</h5>
+                <h2 class="text-primary">1,250</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-chalkboard-teacher text-success"></i></h3>
+                <h5>Teachers</h5>
+                <h2 class="text-success">65</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-book text-info"></i></h3>
+                <h5>Classes</h5>
+                <h2 class="text-info">45</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h3><i class="fas fa-money-bill-wave text-warning"></i></h3>
+                <h5>Revenue</h5>
+                <h2 class="text-warning">₹25L</h2>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% if user.user_type == 'student' %}
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'class_routine' %}" class="btn btn-outline-primary w-100 h-100 py-3">
+                            <i class="fas fa-calendar-alt fa-2x mb-2"></i><br>
+                            Class Routine
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'results' %}" class="btn btn-outline-success w-100 h-100 py-3">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i><br>
+                            View Results
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'attendance' %}" class="btn btn-outline-info w-100 h-100 py-3">
+                            <i class="fas fa-calendar-check fa-2x mb-2"></i><br>
+                            Attendance
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'library' %}" class="btn btn-outline-warning w-100 h-100 py-3">
+                            <i class="fas fa-book fa-2x mb-2"></i><br>
+                            Library
+                        </a>
+                    </div>
+                    {% elif user.user_type == 'teacher' %}
+                    <div class="col-md-3 mb-3">
+                        <a href="#" class="btn btn-outline-primary w-100 h-100 py-3">
+                            <i class="fas fa-calendar-alt fa-2x mb-2"></i><br>
+                            My Schedule
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="#" class="btn btn-outline-success w-100 h-100 py-3">
+                            <i class="fas fa-tasks fa-2x mb-2"></i><br>
+                            Assignments
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="#" class="btn btn-outline-info w-100 h-100 py-3">
+                            <i class="fas fa-users fa-2x mb-2"></i><br>
+                            My Students
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'add_notice' %}" class="btn btn-outline-warning w-100 h-100 py-3">
+                            <i class="fas fa-bullhorn fa-2x mb-2"></i><br>
+                            Add Notice
+                        </a>
+                    </div>
+                    {% elif user.user_type == 'admin' %}
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'student_management' %}" class="btn btn-outline-primary w-100 h-100 py-3">
+                            <i class="fas fa-users fa-2x mb-2"></i><br>
+                            Students
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'teacher_management' %}" class="btn btn-outline-success w-100 h-100 py-3">
+                            <i class="fas fa-chalkboard-teacher fa-2x mb-2"></i><br>
+                            Teachers
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'add_notice' %}" class="btn btn-outline-info w-100 h-100 py-3">
+                            <i class="fas fa-bullhorn fa-2x mb-2"></i><br>
+                            Manage Notices
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="#" class="btn btn-outline-warning w-100 h-100 py-3">
+                            <i class="fas fa-cog fa-2x mb-2"></i><br>
+                            Settings
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activities & Notices -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Activities</h5>
+            </div>
+            <div class="card-body">
+                <div class="activity-timeline">
+                    <div class="activity-item d-flex border-bottom pb-3 mb-3">
+                        <div class="activity-icon me-3">
+                            <i class="fas fa-chart-line text-success"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h6 class="mb-1">Results Published</h6>
+                            <p class="mb-1 text-muted">Term 1 examination results have been published.</p>
+                            <small class="text-muted">2 hours ago</small>
+                        </div>
+                    </div>
+                    <div class="activity-item d-flex border-bottom pb-3 mb-3">
+                        <div class="activity-icon me-3">
+                            <i class="fas fa-bullhorn text-primary"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h6 class="mb-1">New Notice</h6>
+                            <p class="mb-1 text-muted">Parent-Teacher meeting scheduled for next week.</p>
+                            <small class="text-muted">1 day ago</small>
+                        </div>
+                    </div>
+                    <div class="activity-item d-flex border-bottom pb-3 mb-3">
+                        <div class="activity-icon me-3">
+                            <i class="fas fa-calendar-alt text-info"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h6 class="mb-1">Class Routine Updated</h6>
+                            <p class="mb-1 text-muted">Class routine has been updated for the new semester.</p>
+                            <small class="text-muted">2 days ago</small>
+                        </div>
+                    </div>
+                    <div class="activity-item d-flex">
+                        <div class="activity-icon me-3">
+                            <i class="fas fa-book text-warning"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h6 class="mb-1">Library Book Due</h6>
+                            <p class="mb-1 text-muted">Reminder: Library book return date is approaching.</p>
+                            <small class="text-muted">3 days ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Upcoming Events</h5>
+            </div>
+            <div class="card-body">
+                <div class="event-list">
+                    <div class="event-item border-bottom pb-2 mb-2">
+                        <h6 class="text-primary mb-1">Annual Sports Day</h6>
+                        <p class="mb-1 text-muted"><i class="fas fa-calendar"></i> March 20, 2024</p>
+                        <small>School Ground</small>
+                    </div>
+                    <div class="event-item border-bottom pb-2 mb-2">
+                        <h6 class="text-success mb-1">Science Exhibition</h6>
+                        <p class="mb-1 text-muted"><i class="fas fa-calendar"></i> March 25, 2024</p>
+                        <small>Science Lab</small>
+                    </div>
+                    <div class="event-item">
+                        <h6 class="text-info mb-1">PTM - Class 10</h6>
+                        <p class="mb-1 text-muted"><i class="fas fa-calendar"></i> March 28, 2024</p>
+                        <small>School Auditorium</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Quick Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="quick-stats">
+                    <div class="stat-item d-flex justify-content-between mb-2">
+                        <span>Messages</span>
+                        <span class="badge bg-primary">5</span>
+                    </div>
+                    <div class="stat-item d-flex justify-content-between mb-2">
+                        <span>Assignments</span>
+                        <span class="badge bg-success">3</span>
+                    </div>
+                    <div class="stat-item d-flex justify-content-between mb-2">
+                        <span>Notifications</span>
+                        <span class="badge bg-info">8</span>
+                    </div>
+                    <div class="stat-item d-flex justify-content-between">
+                        <span>Pending Tasks</span>
+                        <span class="badge bg-warning">2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
