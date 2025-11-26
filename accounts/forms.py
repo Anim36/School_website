@@ -4,7 +4,7 @@ from .models import User
 
 
 class UserRegistrationForm(UserCreationForm):
-    email = forms.EmailField()
+    email = forms.EmailField(required=True)
     user_type = forms.ChoiceField(
         choices=[
             ('student', 'Student'),
@@ -16,7 +16,7 @@ class UserRegistrationForm(UserCreationForm):
     # Student specific fields
     date_of_birth = forms.DateField(
         required=False,
-        widget=forms.DateInput(attrs={'type': 'date'}),
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         help_text="Student's date of birth"
     )
     gender = forms.ChoiceField(
@@ -41,22 +41,59 @@ class UserRegistrationForm(UserCreationForm):
         min_value=1,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 1', 'min': '1'})
     )
-    parent_name = forms.CharField(
+    father_name = forms.CharField(  # Changed from parent_name to father_name
         max_length=100,
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter parent\'s name'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter father\'s name'})
+    )
+    mother_name = forms.CharField(  # Added mother_name field
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter mother\'s name'})
     )
     parent_phone = forms.CharField(
         max_length=15,
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter parent\'s phone'})
     )
+    parent_email = forms.EmailField(  # Added parent_email field
+        required=False,
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter parent\'s email'})
+    )
+    parent_address = forms.CharField(  # Added parent_address field
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Enter parent\'s address'})
+    )
+
+    # Teacher specific fields - ADD THESE
+    teacher_gender = forms.ChoiceField(
+        choices=[('', 'Select Gender'), ('Male', 'Male'), ('Female', 'Female')],
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    teacher_dob = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        help_text="Teacher's date of birth"
+    )
+    qualification = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., M.A., B.Ed., etc.'})
+    )
+    specialization = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Mathematics, Science, etc.'})
+    )
 
     class Meta:
         model = User
         fields = ['username', 'email', 'user_type', 'password1', 'password2',
-                  'first_name', 'last_name', 'phone', 'date_of_birth', 'gender',
-                  'class_name', 'section', 'roll_number', 'parent_name', 'parent_phone']
+                  'first_name', 'last_name', 'phone', 'address',  # Added address
+                  'date_of_birth', 'gender', 'class_name', 'section', 'roll_number',
+                  'father_name', 'mother_name', 'parent_phone', 'parent_email', 'parent_address',
+                  'teacher_gender', 'teacher_dob', 'qualification', 'specialization']  # Added teacher fields
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -69,6 +106,42 @@ class UserRegistrationForm(UserCreationForm):
                             field.widget.attrs['class'] = 'form-select'
                         else:
                             field.widget.attrs['class'] = 'form-control'
+
+        # Make address field optional but available for all users
+        self.fields['address'] = forms.CharField(
+            required=False,
+            widget=forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Enter your residential address'
+            })
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        user_type = cleaned_data.get('user_type')
+
+        # Student validation
+        if user_type == 'student':
+            if not cleaned_data.get('class_name'):
+                self.add_error('class_name', 'Class is required for students.')
+            if not cleaned_data.get('section'):
+                self.add_error('section', 'Section is required for students.')
+            if not cleaned_data.get('roll_number'):
+                self.add_error('roll_number', 'Roll number is required for students.')
+            if not cleaned_data.get('father_name'):
+                self.add_error('father_name', "Father's name is required for students.")
+
+        # Teacher validation
+        if user_type == 'teacher':
+            if not cleaned_data.get('qualification'):
+                self.add_error('qualification', 'Qualification is required for teachers.')
+            if not cleaned_data.get('specialization'):
+                self.add_error('specialization', 'Specialization is required for teachers.')
+            if not cleaned_data.get('teacher_gender'):
+                self.add_error('teacher_gender', 'Gender is required for teachers.')
+
+        return cleaned_data
 
 
 class ProfileUpdateForm(forms.ModelForm):
@@ -90,6 +163,7 @@ class ProfileUpdateForm(forms.ModelForm):
         self.fields['email'].required = True
 
 
+# Separate form for student registration (optional - you can remove this if using the main form)
 class StudentRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -121,7 +195,6 @@ class StudentRegistrationForm(UserCreationForm):
     # Parent Information
     father_name = forms.CharField(
         max_length=100,
-        required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': "Father's full name"
@@ -137,7 +210,6 @@ class StudentRegistrationForm(UserCreationForm):
     )
     parent_phone = forms.CharField(
         max_length=15,
-        required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': "Parent's phone number"

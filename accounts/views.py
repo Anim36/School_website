@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserRegistrationForm, ProfileUpdateForm
-from school.models import Student, Teacher, Attendance, BookIssue  # Import necessary models
+from school.models import Student, Teacher, Attendance, BookIssue
 import random
 import string
 
@@ -16,10 +16,9 @@ def register(request):
             user_type = form.cleaned_data.get('user_type')
 
             if user_type == 'student':
-                # Create student with parent information
                 student_id = 'STU' + ''.join(random.choices(string.digits, k=6))
 
-                # Get additional student fields from POST data
+                # Student information from form
                 gender = request.POST.get('gender', '')
                 date_of_birth = request.POST.get('date_of_birth') or None
                 class_name = request.POST.get('class_name', 'Class 1')
@@ -29,6 +28,7 @@ def register(request):
                 mother_name = request.POST.get('mother_name', '')
                 parent_phone = request.POST.get('parent_phone', '')
                 parent_email = request.POST.get('parent_email', '')
+                parent_address = request.POST.get('parent_address', '')
 
                 Student.objects.create(
                     user=user,
@@ -41,15 +41,15 @@ def register(request):
                     father_name=father_name,
                     mother_name=mother_name,
                     parent_phone=parent_phone,
-                    parent_email=parent_email
+                    parent_email=parent_email,
+                    parent_address=parent_address
                 )
                 messages.success(request, f'Student account created successfully! Your Student ID is: {student_id}')
 
             elif user_type == 'teacher':
-                # Create teacher with additional information
                 teacher_id = 'TCH' + ''.join(random.choices(string.digits, k=6))
 
-                # Get additional teacher fields from POST data
+                # Teacher information from form
                 gender = request.POST.get('teacher_gender', '')
                 date_of_birth = request.POST.get('teacher_dob') or None
                 qualification = request.POST.get('qualification', '')
@@ -67,6 +67,9 @@ def register(request):
 
             login(request, user)
             return redirect('dashboard')
+        else:
+            # Form errors debug korar jonno
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = UserRegistrationForm()
 
@@ -105,11 +108,9 @@ def dashboard(request):
     user_type = request.user.user_type
 
     if user_type == 'student':
-        # Student এর জন্য student dashboard show করবে
         try:
             student = Student.objects.get(user=request.user)
 
-            # Get basic student data (with error handling)
             try:
                 attendance_count = Attendance.objects.filter(student=student, status='Present').count()
                 total_days = Attendance.objects.filter(student=student).count()
@@ -134,11 +135,9 @@ def dashboard(request):
             return render(request, 'school/student_dashboard.html', context)
         except Student.DoesNotExist:
             messages.error(request, 'Student profile not found!')
-            # Fallback to basic dashboard
             return render(request, 'accounts/dashboard.html', {'user_type': user_type})
 
     else:
-        # Admin and teachers এর জন্য regular dashboard
         context = {'user_type': user_type}
 
         if user_type == 'teacher':

@@ -4,9 +4,9 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-10">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-primary text-white">
                 <h4 class="card-title mb-0"><i class="fas fa-user-circle"></i> My Profile</h4>
             </div>
             <div class="card-body">
@@ -23,14 +23,15 @@
                     {% csrf_token %}
 
                     <div class="row">
-                        <div class="col-md-4 text-center">
+                        <!-- Profile Picture Section -->
+                        <div class="col-md-3 text-center">
                             <div class="profile-picture mb-3">
                                 {% if user.profile_picture %}
                                     <img src="{{ user.profile_picture.url }}" alt="Profile Picture"
-                                         class="img-fluid rounded-circle"
+                                         class="img-fluid rounded-circle border"
                                          style="width: 150px; height: 150px; object-fit: cover;">
                                 {% else %}
-                                    <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center"
+                                    <div class="bg-primary text-white rounded-circle mx-auto d-flex align-items-center justify-content-center border"
                                          style="width: 150px; height: 150px;">
                                         <i class="fas fa-user fa-3x"></i>
                                     </div>
@@ -40,156 +41,274 @@
                             <div class="mb-3">
                                 <label for="id_profile_picture" class="form-label">Change Profile Picture</label>
                                 {{ form.profile_picture }}
-                                <div class="form-text">Supported formats: JPG, PNG, GIF</div>
                             </div>
 
                             <div class="mt-3">
-                                <span class="badge bg-{% if user.user_type == 'admin' %}danger{% elif user.user_type == 'teacher' %}warning{% else %}info{% endif %}">
+                                <span class="badge bg-{% if user.user_type == 'admin' %}danger{% elif user.user_type == 'teacher' %}warning{% else %}info{% endif %} fs-6">
+                                    <i class="fas fa-{% if user.user_type == 'admin' %}crown{% elif user.user_type == 'teacher' %}chalkboard-teacher{% else %}user-graduate{% endif %} me-1"></i>
                                     {{ user.get_user_type_display }}
                                 </span>
                             </div>
+
+                            <!-- Basic Info Card -->
+                            <div class="card mt-3">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">Member Since</h6>
+                                    <p class="card-text text-muted">
+                                        {{ user.date_joined|date:"M d, Y" }}
+                                    </p>
+                                    {% if user.user_type == 'student' and student %}
+                                    <hr>
+                                    <h6 class="card-title">Student ID</h6>
+                                    <p class="card-text text-primary fw-bold">{{ student.student_id }}</p>
+                                    {% elif user.user_type == 'teacher' and teacher %}
+                                    <hr>
+                                    <h6 class="card-title">Teacher ID</h6>
+                                    <p class="card-text text-primary fw-bold">{{ teacher.teacher_id }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="col-md-8">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">First Name</label>
-                                        {{ form.first_name }}
-                                        {% if form.first_name.errors %}
-                                            <div class="text-danger">{{ form.first_name.errors }}</div>
-                                        {% endif %}
-                                    </div>
+                        <!-- Personal Information -->
+                        <div class="col-md-9">
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Personal Information</h5>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">First Name *</label>
+                                                {{ form.first_name }}
+                                                {% if form.first_name.errors %}
+                                                    <div class="text-danger small">{{ form.first_name.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Last Name *</label>
+                                                {{ form.last_name }}
+                                                {% if form.last_name.errors %}
+                                                    <div class="text-danger small">{{ form.last_name.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Username</label>
+                                                <input type="text" class="form-control bg-light" value="{{ user.username }}" readonly>
+                                                <small class="form-text text-muted">Username cannot be changed</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Email *</label>
+                                                {{ form.email }}
+                                                {% if form.email.errors %}
+                                                    <div class="text-danger small">{{ form.email.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Phone Number</label>
+                                                {{ form.phone }}
+                                                {% if form.phone.errors %}
+                                                    <div class="text-danger small">{{ form.phone.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Date of Birth</label>
+                                                {% if user.user_type == 'student' and student %}
+                                                    <input type="text" class="form-control bg-light"
+                                                           value="{% if student.date_of_birth %}{{ student.date_of_birth|date:'F d, Y' }}{% else %}Not set{% endif %}" readonly>
+                                                {% elif user.user_type == 'teacher' and teacher %}
+                                                    <input type="text" class="form-control bg-light"
+                                                           value="{% if teacher.date_of_birth %}{{ teacher.date_of_birth|date:'F d, Y' }}{% else %}Not set{% endif %}" readonly>
+                                                {% else %}
+                                                    <input type="text" class="form-control bg-light" value="Not set" readonly>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="mb-3">
-                                        <label class="form-label">Last Name</label>
-                                        {{ form.last_name }}
-                                        {% if form.last_name.errors %}
-                                            <div class="text-danger">{{ form.last_name.errors }}</div>
+                                        <label class="form-label">Address</label>
+                                        {{ form.address }}
+                                        {% if form.address.errors %}
+                                            <div class="text-danger small">{{ form.address.errors }}</div>
                                         {% endif %}
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Username</label>
-                                        <input type="text" class="form-control" value="{{ user.username }}" readonly>
-                                        <small class="form-text text-muted">Username cannot be changed</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Email</label>
-                                        {{ form.email }}
-                                        {% if form.email.errors %}
-                                            <div class="text-danger">{{ form.email.errors }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Phone</label>
-                                        {{ form.phone }}
-                                        {% if form.phone.errors %}
-                                            <div class="text-danger">{{ form.phone.errors }}</div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Date of Birth</label>
-                                        {% if user.user_type == 'student' and student %}
-                                            <input type="text" class="form-control"
-                                                   value="{{ student.date_of_birth|date:'M d, Y' }}" readonly>
-                                        {% elif user.user_type == 'teacher' and teacher %}
-                                            <input type="text" class="form-control"
-                                                   value="{{ teacher.date_of_birth|date:'M d, Y' }}" readonly>
-                                        {% else %}
-                                            <input type="text" class="form-control" value="Not set" readonly>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Address</label>
-                                {{ form.address }}
-                                {% if form.address.errors %}
-                                    <div class="text-danger">{{ form.address.errors }}</div>
-                                {% endif %}
-                            </div>
-
+                            <!-- Student Specific Information -->
                             {% if user.user_type == 'student' and student %}
-                            <h5 class="mt-4 mb-3 text-primary">Academic Information</h5>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">Student ID</label>
-                                        <input type="text" class="form-control" value="{{ student.student_id }}" readonly>
-                                    </div>
+                            <div class="card mb-4">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>Academic Information</h5>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">Class</label>
-                                        <input type="text" class="form-control" value="{{ student.class_name }}" readonly>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Student ID</label>
+                                                <input type="text" class="form-control bg-light" value="{{ student.student_id }}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Class</label>
+                                                <input type="text" class="form-control bg-light" value="{{ student.class_name }}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Section</label>
+                                                <input type="text" class="form-control bg-light" value="{{ student.section }}" readonly>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">Section</label>
-                                        <input type="text" class="form-control" value="{{ student.section }}" readonly>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Roll Number</label>
+                                                <input type="text" class="form-control bg-light" value="{{ student.roll_number }}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Gender</label>
+                                                <input type="text" class="form-control bg-light"
+                                                       value="{% if student.gender %}{{ student.gender }}{% else %}Not set{% endif %}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Admission Date</label>
+                                                <input type="text" class="form-control bg-light" value="{{ student.admission_date|date:'F d, Y' }}" readonly>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Roll Number</label>
-                                        <input type="text" class="form-control" value="{{ student.roll_number }}" readonly>
-                                    </div>
+
+                            <!-- Parent/Guardian Information -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Parent/Guardian Information</h5>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Admission Date</label>
-                                        <input type="text" class="form-control" value="{{ student.admission_date|date:'M d, Y' }}" readonly>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Father's Name</label>
+                                                <input type="text" class="form-control bg-light"
+                                                       value="{% if student.father_name %}{{ student.father_name }}{% else %}Not provided{% endif %}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Mother's Name</label>
+                                                <input type="text" class="form-control bg-light"
+                                                       value="{% if student.mother_name %}{{ student.mother_name }}{% else %}Not provided{% endif %}" readonly>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Parent's Phone</label>
+                                                <input type="text" class="form-control bg-light"
+                                                       value="{% if student.parent_phone %}{{ student.parent_phone }}{% else %}Not provided{% endif %}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Parent's Email</label>
+                                                <input type="text" class="form-control bg-light"
+                                                       value="{% if student.parent_email %}{{ student.parent_email }}{% else %}Not provided{% endif %}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if student.parent_address %}
+                                    <div class="mb-3">
+                                        <label class="form-label">Parent's Address</label>
+                                        <textarea class="form-control bg-light" rows="2" readonly>{{ student.parent_address }}</textarea>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             {% endif %}
 
+                            <!-- Teacher Specific Information -->
                             {% if user.user_type == 'teacher' and teacher %}
-                            <h5 class="mt-4 mb-3 text-primary">Professional Information</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Teacher ID</label>
-                                        <input type="text" class="form-control" value="{{ teacher.teacher_id }}" readonly>
-                                    </div>
+                            <div class="card mb-4">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5 class="mb-0"><i class="fas fa-chalkboard-teacher me-2"></i>Professional Information</h5>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Joining Date</label>
-                                        <input type="text" class="form-control" value="{{ teacher.joining_date|date:'M d, Y' }}" readonly>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Teacher ID</label>
+                                                <input type="text" class="form-control bg-light" value="{{ teacher.teacher_id }}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Gender</label>
+                                                <input type="text" class="form-control bg-light"
+                                                       value="{% if teacher.gender %}{{ teacher.gender }}{% else %}Not set{% endif %}" readonly>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Qualification</label>
-                                        <input type="text" class="form-control" value="{{ teacher.qualification }}" readonly>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Qualification</label>
+                                                <input type="text" class="form-control bg-light"
+                                                       value="{% if teacher.qualification %}{{ teacher.qualification }}{% else %}Not provided{% endif %}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Specialization</label>
+                                                <input type="text" class="form-control bg-light"
+                                                       value="{% if teacher.specialization %}{{ teacher.specialization }}{% else %}Not provided{% endif %}" readonly>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label">Specialization</label>
-                                        <input type="text" class="form-control" value="{{ teacher.specialization }}" readonly>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Joining Date</label>
+                                                <input type="text" class="form-control bg-light" value="{{ teacher.joining_date|date:'F d, Y' }}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Salary</label>
+                                                <input type="text" class="form-control bg-light"
+                                                       value="{% if teacher.salary %}৳ {{ teacher.salary }}{% else %}Not set{% endif %}" readonly>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -197,9 +316,14 @@
                         </div>
                     </div>
 
+                    <!-- Action Buttons -->
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <a href="{% url 'dashboard' %}" class="btn btn-secondary me-md-2">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Update Profile
+                        </button>
                     </div>
                 </form>
             </div>
@@ -207,8 +331,8 @@
 
         <!-- Change Password Card -->
         <div class="card mt-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-lock"></i> Change Password</h5>
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="fas fa-lock me-2"></i>Change Password</h5>
             </div>
             <div class="card-body">
                 <form method="post" action="{% url 'password_change' %}">
@@ -216,31 +340,78 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">Current Password</label>
-                                <input type="password" class="form-control" name="old_password" required>
+                                <label class="form-label">Current Password *</label>
+                                <input type="password" class="form-control" name="old_password" required
+                                       placeholder="Enter current password">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">New Password</label>
-                                <input type="password" class="form-control" name="new_password1" required>
+                                <label class="form-label">New Password *</label>
+                                <input type="password" class="form-control" name="new_password1" required
+                                       placeholder="Enter new password">
+                                <div class="form-text">Minimum 8 characters with letters and numbers</div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" name="new_password2" required>
+                                <label class="form-label">Confirm Password *</label>
+                                <input type="password" class="form-control" name="new_password2" required
+                                       placeholder="Confirm new password">
                             </div>
                         </div>
                     </div>
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-warning">Change Password</button>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-key me-2"></i>Change Password
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    border: none;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.profile-picture {
+    position: relative;
+}
+
+.profile-picture img, .profile-picture div {
+    border: 3px solid #0d6efd;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+}
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -258,20 +429,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 reader.onload = function(e) {
                     if (profileImage) {
                         profileImage.src = e.target.result;
-                    } else {
-                        // Create new image element if it doesn't exist
+                    } else if (profileDiv) {
+                        // Replace icon div with image
                         const newImg = document.createElement('img');
                         newImg.src = e.target.result;
                         newImg.alt = 'Profile Picture';
-                        newImg.className = 'img-fluid rounded-circle';
+                        newImg.className = 'img-fluid rounded-circle border';
                         newImg.style.width = '150px';
                         newImg.style.height = '150px';
                         newImg.style.objectFit = 'cover';
 
-                        // Replace the icon div with image
-                        if (profileDiv) {
-                            profileDiv.parentNode.replaceChild(newImg, profileDiv);
-                        }
+                        profileDiv.parentNode.replaceChild(newImg, profileDiv);
                     }
                 };
 

@@ -27,6 +27,12 @@
                             {% endfor %}
                         </ul>
                     </div>
+
+                    <!-- Form errors display section এর পরে এটি add করুন -->
+                    <div class="alert alert-warning">
+                        <h6>Debug Information:</h6>
+                        <pre>{{ form.errors.as_json }}</pre>
+                    </div>
                     {% endif %}
 
                     <h5 class="mb-3 text-primary">Account Information</h5>
@@ -76,31 +82,50 @@
                         </div>
                     </div>
 
+                    <!-- Address Field for All Users -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="id_address" class="form-label">
+                                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                                    Address
+                                </label>
+                                <textarea name="address" id="id_address" class="form-control" rows="3"
+                                          placeholder="Enter your complete residential address including house number, road, area, city, and postal code"></textarea>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1 text-info"></i>
+                                    This address will be displayed in your profile
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Student Specific Fields -->
                     <div id="student-fields" style="display: {% if form.user_type.value == 'student' %}block{% else %}none{% endif %};">
                         <h5 class="mb-3 text-primary mt-4">Student Information</h5>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="id_gender" class="form-label">Gender</label>
-                                    <select name="gender" id="id_gender" class="form-select">
+                                    <label for="id_gender" class="form-label">Gender *</label>
+                                    <select name="gender" id="id_gender" class="form-select" required>
                                         <option value="">Select Gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
                                     </select>
+                                    <div class="form-text">This will be shown in your profile</div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="id_date_of_birth" class="form-label">Date of Birth</label>
-                                    <input type="date" name="date_of_birth" id="id_date_of_birth" class="form-control">
+                                    <label for="id_date_of_birth" class="form-label">Date of Birth *</label>
+                                    <input type="date" name="date_of_birth" id="id_date_of_birth" class="form-control" required>
                                     <div class="form-text">Format: YYYY-MM-DD</div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="id_class_name" class="form-label">Class</label>
-                                    <select name="class_name" id="id_class_name" class="form-select">
+                                    <label for="id_class_name" class="form-label">Class *</label>
+                                    <select name="class_name" id="id_class_name" class="form-select" required>
                                         <option value="">Select Class</option>
                                         <option value="Class 1">Class 1</option>
                                         <option value="Class 2">Class 2</option>
@@ -120,35 +145,44 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="id_section" class="form-label">Section</label>
-                                    <select name="section" id="id_section" class="form-select">
+                                    <label for="id_section" class="form-label">Section *</label>
+                                    <select name="section" id="id_section" class="form-select" required>
                                         <option value="">Select Section</option>
                                         <option value="A">A</option>
                                         <option value="B">B</option>
                                         <option value="C">C</option>
+                                        <option value="D">D</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="id_roll_number" class="form-label">Roll Number</label>
-                                    <input type="number" name="roll_number" id="id_roll_number" class="form-control" min="1" placeholder="Enter roll number">
+                                    <label for="id_roll_number" class="form-label">Roll Number *</label>
+                                    <input type="number" name="roll_number" id="id_roll_number" class="form-control" min="1"
+                                           placeholder="Enter roll number" required>
+                                    <div class="form-text">Must be unique in your class</div>
                                 </div>
                             </div>
                         </div>
 
-                        <h6 class="mb-3 text-info">Parent Information</h6>
+                        <h6 class="mb-3 text-info mt-4">
+                            <i class="fas fa-users me-2"></i>Parent/Guardian Information
+                        </h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="id_father_name" class="form-label">Father's Name</label>
-                                    <input type="text" name="father_name" id="id_father_name" class="form-control" placeholder="Father's full name">
+                                    <label for="id_father_name" class="form-label">Father's Name *</label>
+                                    <input type="text" name="father_name" id="id_father_name" class="form-control"
+                                           placeholder="Father's full name" required>
+                                    <div class="form-text">This will be displayed in your profile</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="id_mother_name" class="form-label">Mother's Name</label>
-                                    <input type="text" name="mother_name" id="id_mother_name" class="form-control" placeholder="Mother's full name">
+                                    <label for="id_mother_name" class="form-label">Mother's Name *</label>
+                                    <input type="text" name="mother_name" id="id_mother_name" class="form-control"
+                                           placeholder="Mother's full name" required>
+                                    <div class="form-text">This will be displayed in your profile</div>
                                 </div>
                             </div>
                         </div>
@@ -156,14 +190,34 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="id_parent_phone" class="form-label">Parent's Phone</label>
-                                    <input type="text" name="parent_phone" id="id_parent_phone" class="form-control" placeholder="Parent's phone number">
+                                    <label for="id_parent_phone" class="form-label">Parent's Phone *</label>
+                                    <input type="text" name="parent_phone" id="id_parent_phone" class="form-control"
+                                           placeholder="Parent's phone number" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="id_parent_email" class="form-label">Parent's Email</label>
-                                    <input type="email" name="parent_email" id="id_parent_email" class="form-control" placeholder="Parent's email address">
+                                    <input type="email" name="parent_email" id="id_parent_email" class="form-control"
+                                           placeholder="Parent's email address">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Parent Address Section -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="id_parent_address" class="form-label">
+                                        <i class="fas fa-home me-2 text-success"></i>
+                                        Parent's Address
+                                    </label>
+                                    <textarea name="parent_address" id="id_parent_address" class="form-control" rows="2"
+                                              placeholder="Enter parent's residential address (if different from yours)"></textarea>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle me-1 text-info"></i>
+                                        This address will be shown in your student profile
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -175,18 +229,20 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="id_teacher_gender" class="form-label">Gender</label>
-                                    <select name="teacher_gender" id="id_teacher_gender" class="form-select">
+                                    <label for="id_teacher_gender" class="form-label">Gender *</label>
+                                    <select name="teacher_gender" id="id_teacher_gender" class="form-select" required>
                                         <option value="">Select Gender</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
                                     </select>
+                                    <div class="form-text">This will be shown in your profile</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="id_teacher_dob" class="form-label">Date of Birth</label>
-                                    <input type="date" name="teacher_dob" id="id_teacher_dob" class="form-control">
+                                    <label for="id_teacher_dob" class="form-label">Date of Birth *</label>
+                                    <input type="date" name="teacher_dob" id="id_teacher_dob" class="form-control" required>
+                                    <div class="form-text">This will be shown in your profile</div>
                                 </div>
                             </div>
                         </div>
@@ -194,14 +250,18 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="id_qualification" class="form-label">Qualification</label>
-                                    <input type="text" name="qualification" id="id_qualification" class="form-control" placeholder="e.g., M.A., B.Ed., etc.">
+                                    <label for="id_qualification" class="form-label">Qualification *</label>
+                                    <input type="text" name="qualification" id="id_qualification" class="form-control"
+                                           placeholder="e.g., M.A., B.Ed., M.Sc., etc." required>
+                                    <div class="form-text">This will be displayed in your profile</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="id_specialization" class="form-label">Specialization</label>
-                                    <input type="text" name="specialization" id="id_specialization" class="form-control" placeholder="e.g., Mathematics, Science, etc.">
+                                    <label for="id_specialization" class="form-label">Specialization *</label>
+                                    <input type="text" name="specialization" id="id_specialization" class="form-control"
+                                           placeholder="e.g., Mathematics, Science, English, etc." required>
+                                    <div class="form-text">This will be displayed in your profile</div>
                                 </div>
                             </div>
                         </div>
@@ -235,7 +295,8 @@
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="agreeTerms" required>
                         <label class="form-check-label" for="agreeTerms">
-                            I agree to the <a href="#" class="text-decoration-none">Terms and Conditions</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                            I agree that all information provided is accurate and will be displayed in my profile.
+                            I accept the <a href="#" class="text-decoration-none">Terms and Conditions</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
                         </label>
                     </div>
 
@@ -255,7 +316,7 @@
         <div class="card mt-4">
             <div class="card-body text-center">
                 <h6>Quick Registration</h6>
-                <p class="text-muted small mb-3">Select your account type to auto-fill the form</p>
+                <p class="text-muted small mb-3">Select your account type to see relevant fields</p>
                 <div class="btn-group w-100 mt-2">
                     <button type="button" class="btn btn-outline-primary user-type-btn" data-type="student">
                         <i class="fas fa-user-graduate me-2"></i>Student
@@ -321,21 +382,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Form validation for student fields
-    const studentForm = document.querySelector('form');
-    studentForm.addEventListener('submit', function(e) {
+    // Form validation for required fields
+    const registrationForm = document.querySelector('form');
+    registrationForm.addEventListener('submit', function(e) {
         const userType = userTypeSelect.value;
+        let isValid = true;
+        let errorMessage = '';
 
         if (userType === 'student') {
+            const gender = document.getElementById('id_gender').value;
+            const dob = document.getElementById('id_date_of_birth').value;
             const className = document.getElementById('id_class_name').value;
             const section = document.getElementById('id_section').value;
             const rollNumber = document.getElementById('id_roll_number').value;
+            const fatherName = document.getElementById('id_father_name').value;
+            const motherName = document.getElementById('id_mother_name').value;
+            const parentPhone = document.getElementById('id_parent_phone').value;
 
-            if (!className || !section || !rollNumber) {
-                e.preventDefault();
-                alert('Please fill all required student information: Class, Section, and Roll Number.');
-                return false;
+            if (!gender || !dob || !className || !section || !rollNumber || !fatherName || !motherName || !parentPhone) {
+                isValid = false;
+                errorMessage = 'Please fill all required student information: Gender, Date of Birth, Class, Section, Roll Number, Father\'s Name, Mother\'s Name, and Parent\'s Phone.';
             }
+        }
+        else if (userType === 'teacher') {
+            const gender = document.getElementById('id_teacher_gender').value;
+            const dob = document.getElementById('id_teacher_dob').value;
+            const qualification = document.getElementById('id_qualification').value;
+            const specialization = document.getElementById('id_specialization').value;
+
+            if (!gender || !dob || !qualification || !specialization) {
+                isValid = false;
+                errorMessage = 'Please fill all required teacher information: Gender, Date of Birth, Qualification, and Specialization.';
+            }
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+            alert(errorMessage);
+            return false;
         }
     });
 
@@ -394,6 +478,12 @@ document.addEventListener('DOMContentLoaded', function() {
     color: white;
 }
 
+/* Address textarea styling */
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .btn-group {
@@ -410,12 +500,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 
-/* Loading animation */
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
 /* Form section styling */
 h5.text-primary, h6.text-info {
     border-bottom: 2px solid #0d6efd;
@@ -426,6 +510,11 @@ h5.text-primary, h6.text-info {
 h6.text-info {
     border-color: #0dcaf0;
     color: #0dcaf0 !important;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
 }
 </style>
 {% endblock %}

@@ -51,15 +51,15 @@ class Student(models.Model):
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     teacher_id = models.CharField(max_length=20, unique=True)
-    date_of_birth = models.DateField(null=True, blank=True)  # Make optional
+    date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=(('Male', 'Male'), ('Female', 'Female')), default='Male')
     qualification = models.CharField(max_length=100, blank=True)
     specialization = models.CharField(max_length=100, blank=True)
-    joining_date = models.DateField(auto_now_add=True)  # Auto set
+    joining_date = models.DateField(auto_now_add=True)
     salary = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
+        return f"{self.user.get_full_name()} ({self.teacher_id})"
 
 
 class Class(models.Model):
