@@ -318,24 +318,28 @@ def online_admission(request):
         if form.is_valid():
             admission_application = form.save()
 
-            # Here you can add additional processing like:
-            # - Send email notification to admin
-            # - Send confirmation email to applicant
-            # - Generate application ID, etc.
-
-            messages.success(
-                request,
-                'Your admission application has been submitted successfully! ' +
-                'We will contact you within 24-48 hours. ' +
-                f'Application Reference: #{admission_application.id}'
-            )
-            return redirect('online_admission')
+            # Success page এ redirect করবো
+            return redirect('admission_success', application_id=admission_application.id)
         else:
+            # Debug: Print form errors to console
+            print("FORM ERRORS:", form.errors)
+            print("FORM NON FIELD ERRORS:", form.non_field_errors())
             messages.error(request, 'Please correct the errors below.')
     else:
         form = AdmissionForm()
 
     return render(request, 'school/online_admission.html', {'form': form})
+
+
+def admission_success(request, application_id):
+    """Admission application success page"""
+    application = get_object_or_404(AdmissionApplication, id=application_id)
+
+    context = {
+        'application': application,
+        'school_info': SchoolInfo.objects.first(),
+    }
+    return render(request, 'school/admission_success.html', context)
 
 
 @login_required

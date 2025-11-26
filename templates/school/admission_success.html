@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Application Submitted - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow text-center">
+            <div class="card-body py-5">
+                <!-- Success Icon -->
+                <div class="mb-4">
+                    <i class="fas fa-check-circle text-success" style="font-size: 80px;"></i>
+                </div>
+                
+                <!-- Success Message -->
+                <h2 class="text-success mb-3">Application Submitted Successfully!</h2>
+                <p class="lead mb-4">
+                    Thank you <strong>{{ application.name }}</strong> for your admission application to 
+                    <strong>{{ school_info.name }}</strong>.
+                </p>
+                
+                <!-- Application Details -->
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary mb-3">
+                            <i class="fas fa-file-alt me-2"></i>Application Details
+                        </h5>
+                        <div class="row text-start">
+                            <div class="col-md-6">
+                                <p><strong>Application ID:</strong> #{{ application.id }}</p>
+                                <p><strong>Student Name:</strong> {{ application.name }}</p>
+                                <p><strong>Class Applying:</strong> {{ application.class_applying }}</p>
+                                <p><strong>Application Date:</strong> {{ application.application_date|date:"F d, Y" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Email:</strong> {{ application.email }}</p>
+                                <p><strong>Phone:</strong> {{ application.phone }}</p>
+                                <p><strong>Status:</strong> 
+                                    <span class="badge bg-warning text-dark">{{ application.get_status_display }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Next Steps -->
+                <div class="alert alert-info mb-4">
+                    <h5 class="alert-heading"><i class="fas fa-info-circle me-2"></i>What Happens Next?</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li><i class="fas fa-check text-success me-2"></i>Our admission team will review your application</li>
+                        <li><i class="fas fa-check text-success me-2"></i>We will contact you within 24-48 hours</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Please keep your documents ready for verification</li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">
+                            <i class="fas fa-headset me-2"></i>Contact Information
+                        </h5>
+                        <p class="mb-2">
+                            <i class="fas fa-phone me-2 text-primary"></i>
+                            {{ school_info.phone }}
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-envelope me-2 text-primary"></i>
+                            {{ school_info.email }}
+                        </p>
+                        <p class="mb-0">
+                            <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                            {{ school_info.address }}
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'online_admission' %}" class="btn btn-primary me-md-2">
+                        <i class="fas fa-plus me-2"></i>Submit Another Application
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-home me-2"></i>Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

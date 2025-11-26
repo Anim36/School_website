@@ -163,8 +163,7 @@ class AdmissionForm(forms.ModelForm):
             'father_name', 'mother_name', 'parent_phone', 'parent_email',
             'previous_school', 'last_class', 'last_result',
             'birth_certificate', 'father_nid', 'mother_nid',
-            'student_photo', 'previous_result_card',
-            'additional_info'
+            'student_photo', 'previous_result_card'
         ]
         widgets = {
             'name': forms.TextInput(attrs={
@@ -235,16 +234,11 @@ class AdmissionForm(forms.ModelForm):
                 'min': '0',
                 'max': '100'
             }),
-            'additional_info': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Any additional information or questions...'
-            }),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Make file fields not required initially
+        # Make file fields not required in form, but we'll handle validation separately
         self.fields['birth_certificate'].required = False
         self.fields['father_nid'].required = False
         self.fields['mother_nid'].required = False

@@ -12,6 +12,7 @@ urlpatterns = [
     path('library/', views.library_management, name='library'),
     path('fees/', views.fee_payment, name='fee_payment'),
     path('admission/', views.online_admission, name='online_admission'),
+    path('admission/success/<int:application_id>/', views.admission_success, name='admission_success'),
     path('add-notice/', views.add_notice, name='add_notice'),
 
     # Student specific URLs

@@ -266,9 +266,6 @@ class AdmissionApplication(models.Model):
     student_photo = models.ImageField(upload_to='admission_documents/student_photos/', blank=True, null=True)
     previous_result_card = models.FileField(upload_to='admission_documents/result_cards/', blank=True, null=True)
 
-    # Additional Information
-    additional_info = models.TextField(blank=True)
-
     # Application Meta
     application_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
