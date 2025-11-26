@@ -21,9 +21,10 @@
 </div>
 
 <div class="row">
-    <!-- Contact Information -->
+    <!-- Contact Information & Quick Contacts -->
     <div class="col-lg-4 mb-4">
-        <div class="card h-100">
+        <!-- Our Location -->
+        <div class="card">
             <div class="card-header bg-info text-white">
                 <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i> Our Location</h5>
             </div>
@@ -105,7 +106,7 @@
         </div>
     </div>
 
-    <!-- Contact Form -->
+    <!-- Contact Form & Map -->
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header bg-primary text-white">
@@ -177,19 +178,158 @@
                 <h5 class="mb-0"><i class="fas fa-map me-2"></i> Find Us</h5>
             </div>
             <div class="card-body">
-                <div class="map-placeholder bg-light rounded p-5 text-center">
-                    <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">Narail Collectorate School Location</h5>
-                    <p class="text-muted mb-3">Collectorate Road, Narail 7500, Bangladesh</p>
-                    <a href="#" class="btn btn-outline-primary">
-                        <i class="fas fa-directions me-2"></i>Get Directions
-                    </a>
+                <!-- Interactive Map Placeholder with Links -->
+                <div class="text-center">
+                    <div class="map-placeholder bg-light rounded p-4 mb-3">
+                        <i class="fas fa-map-marked-alt fa-4x text-primary mb-3"></i>
+                        <h5 class="text-primary">Narail Government High School</h5>
+                        <p class="text-muted mb-2">Collectorate Road, Narail 7500</p>
+                        <p class="text-muted mb-3">Bangladesh</p>
+
+                        <div class="row justify-content-center">
+                            <div class="col-auto">
+                                <div class="d-grid gap-2">
+                                    <!-- Google Maps Link -->
+                                    <a href="https://www.google.com/maps/place/Narail+Government+High+School/@23.1719637,89.5062611,17z/data=!3m1!4b1!4m6!3m5!1s0x39ffa59e93f503b3:0x7719f88464a5ee15!8m2!3d23.1719637!4d89.508836!16s%2Fm%2F0glry3x?entry=ttu"
+                                       target="_blank" class="btn btn-primary">
+                                        <i class="fab fa-google me-2"></i>View on Google Maps
+                                    </a>
+
+                                    <!-- Directions Link -->
+                                    <a href="https://www.google.com/maps/dir//Narail+Government+High+School+Collectorate+Road+Narail+Bangladesh"
+                                       target="_blank" class="btn btn-outline-primary">
+                                        <i class="fas fa-directions me-2"></i>Get Directions
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Location Info -->
+                <div class="row text-center">
+                    <div class="col-md-4 mb-2">
+                        <div class="card border-0">
+                            <div class="card-body py-2">
+                                <i class="fas fa-compass text-primary mb-2"></i>
+                                <h6 class="mb-1">Coordinates</h6>
+                                <p class="text-muted small mb-0">23.1719637, 89.508836</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="card border-0">
+                            <div class="card-body py-2">
+                                <i class="fas fa-road text-success mb-2"></i>
+                                <h6 class="mb-1">Address</h6>
+                                <p class="text-muted small mb-0">Collectorate Road</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="card border-0">
+                            <div class="card-body py-2">
+                                <i class="fas fa-city text-info mb-2"></i>
+                                <h6 class="mb-1">City</h6>
+                                <p class="text-muted small mb-0">Narail 7500</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<!-- JavaScript for Get Directions with Current Location -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the directions button
+    const directionsBtn = document.querySelector('a[href*="maps/dir"]');
+
+    if (directionsBtn) {
+        // Replace the original link with our enhanced functionality
+        directionsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Show location detection prompt
+            if (confirm('🚗 Get Directions\n\nWould you like to use your current location as the starting point?')) {
+                // User wants to use current location
+                if (!navigator.geolocation) {
+                    alert('Geolocation is not supported by your browser. Opening default directions...');
+                    window.open(this.href, '_blank');
+                    return;
+                }
+
+                // Show loading message
+                const originalText = directionsBtn.innerHTML;
+                directionsBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Detecting Location...';
+                directionsBtn.disabled = true;
+
+                // Get current position
+                navigator.geolocation.getCurrentPosition(
+                    // Success callback
+                    function(position) {
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+
+                        // Create directions URL with user's current location
+                        const directionsUrl = `https://www.google.com/maps/dir/${userLat},${userLng}/Narail+Government+High+School+Collectorate+Road+Narail+Bangladesh`;
+
+                        // Open directions in new tab
+                        window.open(directionsUrl, '_blank');
+
+                        // Reset button
+                        directionsBtn.innerHTML = originalText;
+                        directionsBtn.disabled = false;
+                    },
+                    // Error callback
+                    function(error) {
+                        console.error('Geolocation error:', error);
+
+                        let errorMessage = 'Could not get your location. ';
+
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage += 'Please allow location access to get directions from your current location.';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage += 'Location information is unavailable.';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage += 'Location request timed out.';
+                                break;
+                            default:
+                                errorMessage += 'An unknown error occurred.';
+                                break;
+                        }
+
+                        alert(errorMessage + '\n\nOpening default directions...');
+
+                        // Fallback to regular directions
+                        window.open(directionsBtn.href, '_blank');
+
+                        // Reset button
+                        directionsBtn.innerHTML = originalText;
+                        directionsBtn.disabled = false;
+                    },
+                    // Options
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000, // 10 seconds
+                        maximumAge: 60000 // 1 minute
+                    }
+                );
+            } else {
+                // User doesn't want to use current location, open default directions
+                window.open(this.href, '_blank');
+            }
+        });
+    }
+});
+</script>
 
 <style>
 .hero-section {
@@ -222,6 +362,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
 }
 
 .form-label {
@@ -235,4 +377,14 @@
     font-size: 1.1rem;
     font-weight: 600;
 }
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
 </style>
+{% endblock %}

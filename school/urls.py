@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # Management URLs
     path('students/', views.student_management, name='student_management'),
     path('teachers/', views.teacher_management, name='teacher_management'),
     path('routine/', views.class_routine, name='class_routine'),
@@ -20,8 +21,6 @@ urlpatterns = [
     # Class Routine Management URLs
     path('routine/add/', views.add_class_routine, name='add_class_routine'),
     path('routine/manage/', views.manage_class_routines, name='manage_class_routines'),
-    path('routine/edit/<int:routine_id>/', views.edit_class_routine, name='edit_class_routine'),
-    path('routine/delete/<int:routine_id>/', views.delete_class_routine, name='delete_class_routine'),
 
     # New Pages
     path('about/', views.about, name='about'),
