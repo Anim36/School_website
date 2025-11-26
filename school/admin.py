@@ -81,3 +81,29 @@ class ContactAdmin(admin.ModelAdmin):
     mark_as_responded.short_description = "Mark selected messages as responded"
 
     actions = [mark_as_read, mark_as_responded]
+
+
+@admin.register(AdmissionApplication)
+class AdmissionApplicationAdmin(admin.ModelAdmin):
+    list_display = ['name', 'class_applying', 'email', 'phone', 'application_date', 'status']
+    list_filter = ['status', 'class_applying', 'application_date', 'gender']
+    search_fields = ['name', 'email', 'phone', 'father_name', 'mother_name']
+    readonly_fields = ['application_date']
+    list_editable = ['status']
+
+    def mark_as_reviewed(self, request, queryset):
+        queryset.update(status='reviewed')
+
+    mark_as_reviewed.short_description = "Mark selected applications as reviewed"
+
+    def mark_as_accepted(self, request, queryset):
+        queryset.update(status='accepted')
+
+    mark_as_accepted.short_description = "Mark selected applications as accepted"
+
+    def mark_as_rejected(self, request, queryset):
+        queryset.update(status='rejected')
+
+    mark_as_rejected.short_description = "Mark selected applications as rejected"
+
+    actions = [mark_as_reviewed, mark_as_accepted, mark_as_rejected]

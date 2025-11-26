@@ -1,194 +1,352 @@
 {% extends 'base.html' %}
 
-{% block title %}Online Admission - School Management System{% endblock %}
+{% block title %}Online Admission - {{ school_info.name }}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-10">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h4 class="card-title mb-0"><i class="fas fa-user-graduate"></i> Online Admission Form</h4>
+    <div class="col-lg-10">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="fas fa-user-graduate me-2"></i>Online Admission Form</h3>
             </div>
             <div class="card-body">
-                <div class="admission-progress mb-4">
-                    <div class="progress" style="height: 10px;">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <div class="d-flex justify-content-between mt-2">
-                        <small class="text-success"><strong>Step 1: Personal Info</strong></small>
-                        <small class="text-muted">Step 2: Academic Info</small>
-                        <small class="text-muted">Step 3: Documents</small>
-                        <small class="text-muted">Step 4: Review & Submit</small>
-                    </div>
+                <div class="alert alert-info">
+                    <h5 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Important Information</h5>
+                    <p class="mb-2">Fill out this form to apply for admission. Our admission office will contact you within 24-48 hours for further process.</p>
+                    <p class="mb-0"><strong>Required Documents:</strong> Birth Certificate, Parent NID Cards, Student Photo, Previous Result Card (if applicable)</p>
                 </div>
 
-                <form method="post" enctype="multipart/form-data">
+                <form method="POST" action="{% url 'online_admission' %}" enctype="multipart/form-data">
                     {% csrf_token %}
 
-                    <h5 class="mb-3 text-primary">Student Personal Information</h5>
+                    <!-- Student Information -->
+                    <h5 class="text-primary mb-3"><i class="fas fa-user me-2"></i>Student Information</h5>
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">First Name *</label>
-                                <input type="text" class="form-control" name="first_name" required>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Last Name *</label>
-                                <input type="text" class="form-control" name="last_name" required>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="date_of_birth" class="form-label">Date of Birth *</label>
+                            <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Date of Birth *</label>
-                                <input type="date" class="form-control" name="date_of_birth" required>
+                        <div class="col-md-6 mb-3">
+                            <label for="gender" class="form-label">Gender *</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="class_name" class="form-label">Class Applying For *</label>
+                            <select class="form-select" id="class_name" name="class_name" required>
+                                <option value="">Select Class</option>
+                                <option value="Class 1">Class 1</option>
+                                <option value="Class 2">Class 2</option>
+                                <option value="Class 3">Class 3</option>
+                                <option value="Class 4">Class 4</option>
+                                <option value="Class 5">Class 5</option>
+                                <option value="Class 6">Class 6</option>
+                                <option value="Class 7">Class 7</option>
+                                <option value="Class 8">Class 8</option>
+                                <option value="Class 9">Class 9</option>
+                                <option value="Class 10">Class 10</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="section-card mb-4">
+                        <h5 class="section-title text-primary mb-3">
+                            <i class="fas fa-address-book me-2"></i>Contact Information
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address *</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                <div class="text-danger small">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number *</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                <div class="text-danger small">{{ form.phone.errors }}</div>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Gender *</label>
-                                <select class="form-select" name="gender" required>
-                                    <option value="">Select Gender</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
-                                </select>
+
+                        <div class="mb-3">
+                            <label for="{{ form.address.id_for_label }}" class="form-label">Full Address *</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                            <div class="text-danger small">{{ form.address.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Parent/Guardian Information -->
+                    <div class="section-card mb-4">
+                        <h5 class="section-title text-primary mb-3">
+                            <i class="fas fa-users me-2"></i>Parent/Guardian Information
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.father_name.id_for_label }}" class="form-label">Father's Name *</label>
+                                {{ form.father_name }}
+                                {% if form.father_name.errors %}
+                                <div class="text-danger small">{{ form.father_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.mother_name.id_for_label }}" class="form-label">Mother's Name *</label>
+                                {{ form.mother_name }}
+                                {% if form.mother_name.errors %}
+                                <div class="text-danger small">{{ form.mother_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.parent_phone.id_for_label }}" class="form-label">Parent's Phone Number *</label>
+                                {{ form.parent_phone }}
+                                {% if form.parent_phone.errors %}
+                                <div class="text-danger small">{{ form.parent_phone.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.parent_email.id_for_label }}" class="form-label">Parent's Email</label>
+                                {{ form.parent_email }}
+                                {% if form.parent_email.errors %}
+                                <div class="text-danger small">{{ form.parent_email.errors }}</div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Email Address *</label>
-                                <input type="email" class="form-control" name="email" required>
+                    <!-- Document Upload Section -->
+                    <div class="section-card mb-4">
+                        <h5 class="section-title text-primary mb-3">
+                            <i class="fas fa-file-upload me-2"></i>Required Documents
+                        </h5>
+
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Please upload clear scanned copies or photos of the following documents:</strong>
+                        </div>
+
+                        <div class="row">
+                            <!-- Birth Certificate -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.birth_certificate.id_for_label }}" class="form-label">
+                                    <i class="fas fa-certificate me-2 text-danger"></i>Birth Certificate *
+                                </label>
+                                {{ form.birth_certificate }}
+                                <div class="form-text">Upload clear scan/photo of birth certificate (PDF, JPG, PNG)</div>
+                                {% if form.birth_certificate.errors %}
+                                <div class="text-danger small">{{ form.birth_certificate.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Student Photo -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.student_photo.id_for_label }}" class="form-label">
+                                    <i class="fas fa-camera me-2 text-info"></i>Student Photograph *
+                                </label>
+                                {{ form.student_photo }}
+                                <div class="form-text">Recent passport size photo (JPG, PNG)</div>
+                                {% if form.student_photo.errors %}
+                                <div class="text-danger small">{{ form.student_photo.errors }}</div>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Phone Number *</label>
-                                <input type="tel" class="form-control" name="phone" required>
+
+                        <div class="row">
+                            <!-- Father NID -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.father_nid.id_for_label }}" class="form-label">
+                                    <i class="fas fa-id-card me-2 text-success"></i>Father's NID Card *
+                                </label>
+                                {{ form.father_nid }}
+                                <div class="form-text">Front & Back side of NID card (PDF, JPG, PNG)</div>
+                                {% if form.father_nid.errors %}
+                                <div class="text-danger small">{{ form.father_nid.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Mother NID -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.mother_nid.id_for_label }}" class="form-label">
+                                    <i class="fas fa-id-card me-2 text-success"></i>Mother's NID Card *
+                                </label>
+                                {{ form.mother_nid }}
+                                <div class="form-text">Front & Back side of NID card (PDF, JPG, PNG)</div>
+                                {% if form.mother_nid.errors %}
+                                <div class="text-danger small">{{ form.mother_nid.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Previous Result Card -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.previous_result_card.id_for_label }}" class="form-label">
+                                    <i class="fas fa-file-alt me-2 text-warning"></i>Previous Result Card
+                                </label>
+                                {{ form.previous_result_card }}
+                                <div class="form-text">Last class result card (if applicable)</div>
+                                {% if form.previous_result_card.errors %}
+                                <div class="text-danger small">{{ form.previous_result_card.errors }}</div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
 
-                    <h5 class="mb-3 text-primary mt-4">Academic Information</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Class Applying For *</label>
-                                <select class="form-select" name="applying_class" required>
-                                    <option value="">Select Class</option>
-                                    <option value="1">Class 1</option>
-                                    <option value="2">Class 2</option>
-                                    <option value="3">Class 3</option>
-                                    <option value="4">Class 4</option>
-                                    <option value="5">Class 5</option>
-                                    <option value="6">Class 6</option>
-                                    <option value="7">Class 7</option>
-                                    <option value="8">Class 8</option>
-                                    <option value="9">Class 9</option>
-                                    <option value="10">Class 10</option>
-                                    <option value="11">Class 11</option>
-                                    <option value="12">Class 12</option>
-                                </select>
-                            </div>
+                    <!-- Educational Background -->
+                    <div class="section-card mb-4">
+                        <h5 class="section-title text-primary mb-3">
+                            <i class="fas fa-graduation-cap me-2"></i>Educational Background
+                        </h5>
+                        <div class="mb-3">
+                            <label for="{{ form.previous_school.id_for_label }}" class="form-label">Previous School Name</label>
+                            {{ form.previous_school }}
+                            {% if form.previous_school.errors %}
+                            <div class="text-danger small">{{ form.previous_school.errors }}</div>
+                            {% endif %}
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Previous School</label>
-                                <input type="text" class="form-control" name="previous_school">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_class.id_for_label }}" class="form-label">Last Class Completed</label>
+                                {{ form.last_class }}
+                                {% if form.last_class.errors %}
+                                <div class="text-danger small">{{ form.last_class.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.last_result.id_for_label }}" class="form-label">Last Class Result (%)</label>
+                                {{ form.last_result }}
+                                {% if form.last_result.errors %}
+                                <div class="text-danger small">{{ form.last_result.errors }}</div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
 
-                    <h5 class="mb-3 text-primary mt-4">Parent/Guardian Information</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Father's Name *</label>
-                                <input type="text" class="form-control" name="father_name" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Mother's Name *</label>
-                                <input type="text" class="form-control" name="mother_name" required>
-                            </div>
+                    <!-- Additional Information -->
+                    <div class="section-card mb-4">
+                        <h5 class="section-title text-primary mb-3">
+                            <i class="fas fa-file-alt me-2"></i>Additional Information
+                        </h5>
+                        <div class="mb-3">
+                            <label for="{{ form.additional_info.id_for_label }}" class="form-label">Any Additional Information or Questions</label>
+                            {{ form.additional_info }}
+                            {% if form.additional_info.errors %}
+                            <div class="text-danger small">{{ form.additional_info.errors }}</div>
+                            {% endif %}
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Parent's Phone *</label>
-                                <input type="tel" class="form-control" name="parent_phone" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Parent's Email</label>
-                                <input type="email" class="form-control" name="parent_email">
-                            </div>
-                        </div>
+                    <!-- Terms and Submit -->
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I hereby declare that all information provided is true and correct to the best of my knowledge.
+                            I understand that providing false information may lead to cancellation of admission.
+                        </label>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Address *</label>
-                        <textarea class="form-control" name="address" rows="3" required></textarea>
-                    </div>
-
-                    <div class="alert alert-info">
-                        <h6><i class="fas fa-info-circle"></i> Important Notes:</h6>
-                        <ul class="mb-0">
-                            <li>All fields marked with * are mandatory</li>
-                            <li>You will need to upload documents in the next step</li>
-                            <li>Admission is subject to availability of seats</li>
-                            <li>You will be contacted for further process after form submission</li>
-                        </ul>
-                    </div>
-
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <button type="reset" class="btn btn-secondary me-md-2">Reset Form</button>
-                        <button type="submit" class="btn btn-success">Save & Continue</button>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="reset" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-redo me-2"></i>Reset Form
+                        </button>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Application
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
+        <!-- Contact Information Box -->
         <div class="card mt-4">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="fas fa-question-circle"></i> Admission Process</h5>
-            </div>
             <div class="card-body">
+                <h5 class="card-title text-primary"><i class="fas fa-headset me-2"></i>Need Help?</h5>
+                <p class="card-text">If you face any issues while filling the form or uploading documents, please contact our admission office:</p>
                 <div class="row">
-                    <div class="col-md-3 text-center">
-                        <div class="step-number bg-primary text-white rounded-circle mx-auto mb-2" style="width: 40px; height: 40px; line-height: 40px;">1</div>
-                        <h6>Fill Form</h6>
-                        <small class="text-muted">Complete the online admission form</small>
+                    <div class="col-md-6">
+                        <p class="mb-1"><i class="fas fa-phone me-2 text-primary"></i>{{ school_info.phone }}</p>
                     </div>
-                    <div class="col-md-3 text-center">
-                        <div class="step-number bg-secondary text-white rounded-circle mx-auto mb-2" style="width: 40px; height: 40px; line-height: 40px;">2</div>
-                        <h6>Document Upload</h6>
-                        <small class="text-muted">Upload required documents</small>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <div class="step-number bg-secondary text-white rounded-circle mx-auto mb-2" style="width: 40px; height: 40px; line-height: 40px;">3</div>
-                        <h6>Payment</h6>
-                        <small class="text-muted">Pay admission fee online</small>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <div class="step-number bg-secondary text-white rounded-circle mx-auto mb-2" style="width: 40px; height: 40px; line-height: 40px;">4</div>
-                        <h6>Confirmation</h6>
-                        <small class="text-muted">Receive admission confirmation</small>
+                    <div class="col-md-6">
+                        <p class="mb-1"><i class="fas fa-envelope me-2 text-primary"></i>{{ school_info.email }}</p>
                     </div>
                 </div>
+                <p class="mb-0 mt-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i>{{ school_info.address }}</p>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.section-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.section-title {
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.btn {
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+.alert {
+    border-radius: 10px;
+}
+
+/* File input styling */
+.form-control[type="file"] {
+    padding: 8px;
+}
+
+.form-control[type="file"]::file-selector-button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.form-control[type="file"]::file-selector-button:hover {
+    background: #0b5ed7;
+}
+</style>
 {% endblock %}

@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 from .models import *
-from .forms import NoticeForm, ClassRoutineForm, GalleryForm, ContactForm
+from .forms import NoticeForm, ClassRoutineForm, GalleryForm, ContactForm, AdmissionForm
 
 
 def home(request):
@@ -308,11 +308,34 @@ def fee_payment(request):
     return render(request, 'school/fee_payment.html', {'fees': fees})
 
 
-@login_required
 def online_admission(request):
-    if request.user.user_type not in ['student', 'admin']:
-        return HttpResponseForbidden("You don't have permission to access this page.")
-    return render(request, 'school/online_admission.html')
+    """
+    Online admission form that doesn't require login
+    New students can apply for admission without having an account
+    """
+    if request.method == 'POST':
+        form = AdmissionForm(request.POST, request.FILES)
+        if form.is_valid():
+            admission_application = form.save()
+
+            # Here you can add additional processing like:
+            # - Send email notification to admin
+            # - Send confirmation email to applicant
+            # - Generate application ID, etc.
+
+            messages.success(
+                request,
+                'Your admission application has been submitted successfully! ' +
+                'We will contact you within 24-48 hours. ' +
+                f'Application Reference: #{admission_application.id}'
+            )
+            return redirect('online_admission')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = AdmissionForm()
+
+    return render(request, 'school/online_admission.html', {'form': form})
 
 
 @login_required

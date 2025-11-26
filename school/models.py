@@ -227,3 +227,56 @@ class Contact(models.Model):
     class Meta:
         ordering = ['-submitted_at']
         verbose_name_plural = "Contact Messages"
+
+
+class AdmissionApplication(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('reviewed', 'Reviewed'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+    )
+
+    # Student Information
+    name = models.CharField(max_length=100)
+    date_of_birth = models.DateField()
+    gender = models.CharField(max_length=10, choices=(('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')))
+    class_applying = models.CharField(max_length=50)
+
+    # Contact Information
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+    address = models.TextField()
+
+    # Parent Information
+    father_name = models.CharField(max_length=100)
+    mother_name = models.CharField(max_length=100)
+    parent_phone = models.CharField(max_length=15)
+    parent_email = models.EmailField(blank=True)
+
+    # Educational Background
+    previous_school = models.CharField(max_length=200, blank=True)
+    last_class = models.CharField(max_length=50, blank=True)
+    last_result = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+
+    # Document Uploads
+    birth_certificate = models.FileField(upload_to='admission_documents/birth_certificates/', blank=True, null=True)
+    father_nid = models.FileField(upload_to='admission_documents/nid_cards/', blank=True, null=True)
+    mother_nid = models.FileField(upload_to='admission_documents/nid_cards/', blank=True, null=True)
+    student_photo = models.ImageField(upload_to='admission_documents/student_photos/', blank=True, null=True)
+    previous_result_card = models.FileField(upload_to='admission_documents/result_cards/', blank=True, null=True)
+
+    # Additional Information
+    additional_info = models.TextField(blank=True)
+
+    # Application Meta
+    application_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    notes = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.class_applying} - {self.status}"
+
+    class Meta:
+        ordering = ['-application_date']
+        verbose_name_plural = "Admission Applications"
