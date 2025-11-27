@@ -13,7 +13,49 @@ class UserRegistrationForm(UserCreationForm):
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
-    # Student specific fields
+    # Address fields for all users
+    division = forms.ChoiceField(
+        choices=[
+            ('', 'Select Division'),
+            ('Dhaka', 'Dhaka Division'),
+            ('Chittagong', 'Chittagong Division'),
+            ('Rajshahi', 'Rajshahi Division'),
+            ('Khulna', 'Khulna Division'),
+            ('Barisal', 'Barisal Division'),
+            ('Sylhet', 'Sylhet Division'),
+            ('Rangpur', 'Rangpur Division'),
+            ('Mymensingh', 'Mymensingh Division'),
+        ],
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    district = forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Narail, Jashore, Dhaka'})
+    )
+    thana = forms.CharField(
+        max_length=50,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Narail Sadar, Lohagara, Kalia'})
+    )
+    postal_code = forms.CharField(
+        max_length=10,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 7500'})
+    )
+    area_village = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Village Name'})
+    )
+    house_details = forms.CharField(
+        max_length=200,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'House No:'})
+    )
+
+    # Student specific fields - FIXED: Make them required=False initially
     date_of_birth = forms.DateField(
         required=False,
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
@@ -41,12 +83,12 @@ class UserRegistrationForm(UserCreationForm):
         min_value=1,
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 1', 'min': '1'})
     )
-    father_name = forms.CharField(  # Changed from parent_name to father_name
+    father_name = forms.CharField(
         max_length=100,
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter father\'s name'})
     )
-    mother_name = forms.CharField(  # Added mother_name field
+    mother_name = forms.CharField(
         max_length=100,
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter mother\'s name'})
@@ -56,16 +98,16 @@ class UserRegistrationForm(UserCreationForm):
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter parent\'s phone'})
     )
-    parent_email = forms.EmailField(  # Added parent_email field
+    parent_email = forms.EmailField(
         required=False,
         widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter parent\'s email'})
     )
-    parent_address = forms.CharField(  # Added parent_address field
+    parent_address = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Enter parent\'s address'})
     )
 
-    # Teacher specific fields - ADD THESE
+    # Teacher specific fields - FIXED: Make them required=False initially
     teacher_gender = forms.ChoiceField(
         choices=[('', 'Select Gender'), ('Male', 'Male'), ('Female', 'Female')],
         required=False,
@@ -86,17 +128,24 @@ class UserRegistrationForm(UserCreationForm):
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Mathematics, Science, etc.'})
     )
+    joining_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        help_text="Teacher's joining date"
+    )
 
     class Meta:
         model = User
         fields = ['username', 'email', 'user_type', 'password1', 'password2',
-                  'first_name', 'last_name', 'phone', 'address',  # Added address
+                  'first_name', 'last_name', 'phone',
+                  'division', 'district', 'thana', 'postal_code', 'area_village', 'house_details',
                   'date_of_birth', 'gender', 'class_name', 'section', 'roll_number',
                   'father_name', 'mother_name', 'parent_phone', 'parent_email', 'parent_address',
-                  'teacher_gender', 'teacher_dob', 'qualification', 'specialization']  # Added teacher fields
+                  'teacher_gender', 'teacher_dob', 'qualification', 'specialization', 'joining_date']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         # Add Bootstrap classes to all fields
         for field_name, field in self.fields.items():
             if field_name not in ['password1', 'password2']:
@@ -107,39 +156,41 @@ class UserRegistrationForm(UserCreationForm):
                         else:
                             field.widget.attrs['class'] = 'form-control'
 
-        # Make address field optional but available for all users
-        self.fields['address'] = forms.CharField(
-            required=False,
-            widget=forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 3,
-                'placeholder': 'Enter your residential address'
-            })
-        )
-
     def clean(self):
         cleaned_data = super().clean()
         user_type = cleaned_data.get('user_type')
 
-        # Student validation
+        # Student validation - FIXED: Only validate if user_type is student
         if user_type == 'student':
-            if not cleaned_data.get('class_name'):
-                self.add_error('class_name', 'Class is required for students.')
-            if not cleaned_data.get('section'):
-                self.add_error('section', 'Section is required for students.')
-            if not cleaned_data.get('roll_number'):
-                self.add_error('roll_number', 'Roll number is required for students.')
-            if not cleaned_data.get('father_name'):
-                self.add_error('father_name', "Father's name is required for students.")
+            required_student_fields = [
+                ('class_name', 'Class is required for students.'),
+                ('section', 'Section is required for students.'),
+                ('roll_number', 'Roll number is required for students.'),
+                ('father_name', "Father's name is required for students."),
+                ('gender', 'Gender is required for students.'),
+                ('date_of_birth', 'Date of birth is required for students.')
+            ]
 
-        # Teacher validation
+            for field, error_message in required_student_fields:
+                if not cleaned_data.get(field):
+                    self.add_error(field, error_message)
+
+        # Teacher validation - FIXED: Only validate if user_type is teacher
         if user_type == 'teacher':
-            if not cleaned_data.get('qualification'):
-                self.add_error('qualification', 'Qualification is required for teachers.')
-            if not cleaned_data.get('specialization'):
-                self.add_error('specialization', 'Specialization is required for teachers.')
-            if not cleaned_data.get('teacher_gender'):
-                self.add_error('teacher_gender', 'Gender is required for teachers.')
+            required_teacher_fields = [
+                ('qualification', 'Qualification is required for teachers.'),
+                ('specialization', 'Specialization is required for teachers.'),
+                ('teacher_gender', 'Gender is required for teachers.'),
+                ('teacher_dob', 'Date of birth is required for teachers.'),
+                ('joining_date', 'Joining date is required for teachers.')
+            ]
+
+            for field, error_message in required_teacher_fields:
+                field_value = cleaned_data.get(field)
+                if not field_value:
+                    self.add_error(field, error_message)
+                elif isinstance(field_value, str) and field_value.strip() == '':
+                    self.add_error(field, error_message)
 
         return cleaned_data
 
@@ -161,80 +212,3 @@ class ProfileUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Make email required
         self.fields['email'].required = True
-
-
-# Separate form for student registration (optional - you can remove this if using the main form)
-class StudentRegistrationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-
-    # Student Information
-    class_name = forms.ChoiceField(
-        choices=[
-            ('Class 1', 'Class 1'),
-            ('Class 2', 'Class 2'),
-            ('Class 3', 'Class 3'),
-            ('Class 4', 'Class 4'),
-            ('Class 5', 'Class 5'),
-            ('Class 6', 'Class 6'),
-            ('Class 7', 'Class 7'),
-            ('Class 8', 'Class 8'),
-            ('Class 9', 'Class 9'),
-            ('Class 10', 'Class 10'),
-        ],
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    section = forms.ChoiceField(
-        choices=[('A', 'A'), ('B', 'B'), ('C', 'C')],
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    roll_number = forms.IntegerField(
-        min_value=1,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter roll number'})
-    )
-
-    # Parent Information
-    father_name = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': "Father's full name"
-        })
-    )
-    mother_name = forms.CharField(
-        max_length=100,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': "Mother's full name"
-        })
-    )
-    parent_phone = forms.CharField(
-        max_length=15,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': "Parent's phone number"
-        })
-    )
-    parent_email = forms.EmailField(
-        required=False,
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control',
-            'placeholder': "Parent's email address"
-        })
-    )
-
-    class Meta:
-        model = User
-        fields = [
-            'username', 'email', 'password1', 'password2',
-            'first_name', 'last_name', 'phone',
-            'class_name', 'section', 'roll_number',
-            'father_name', 'mother_name', 'parent_phone', 'parent_email'
-        ]
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter username'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter email'}),
-            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter first name'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter last name'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your phone number'}),
-        }

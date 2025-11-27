@@ -86,16 +86,56 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="mb-3">
-                                <label for="id_address" class="form-label">
+                                <label class="form-label">
                                     <i class="fas fa-map-marker-alt me-2 text-primary"></i>
-                                    Address
+                                    Current Address
                                 </label>
-                                <textarea name="address" id="id_address" class="form-control" rows="3"
-                                          placeholder="Enter your complete residential address including house number, road, area, city, and postal code"></textarea>
-                                <div class="form-text">
-                                    <i class="fas fa-info-circle me-1 text-info"></i>
-                                    This address will be displayed in your profile
-                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FIXED: Use Django form fields instead of manual HTML -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_division" class="form-label">Division *</label>
+                                {{ form.division }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_district" class="form-label">District *</label>
+                                {{ form.district }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_thana" class="form-label">Thana/Upazila *</label>
+                                {{ form.thana }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_postal_code" class="form-label">Postal Code</label>
+                                {{ form.postal_code }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_area_village" class="form-label">Area/Village *</label>
+                                {{ form.area_village }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_house_details" class="form-label">House Details</label>
+                                {{ form.house_details }}
                             </div>
                         </div>
                     </div>
@@ -107,37 +147,21 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="id_gender" class="form-label">Gender *</label>
-                                    <select name="gender" id="id_gender" class="form-select" required>
-                                        <option value="">Select Gender</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                    </select>
+                                    {{ form.gender }}
                                     <div class="form-text">This will be shown in your profile</div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="id_date_of_birth" class="form-label">Date of Birth *</label>
-                                    <input type="date" name="date_of_birth" id="id_date_of_birth" class="form-control" required>
+                                    {{ form.date_of_birth }}
                                     <div class="form-text">Format: YYYY-MM-DD</div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="id_class_name" class="form-label">Class *</label>
-                                    <select name="class_name" id="id_class_name" class="form-select" required>
-                                        <option value="">Select Class</option>
-                                        <option value="Class 1">Class 1</option>
-                                        <option value="Class 2">Class 2</option>
-                                        <option value="Class 3">Class 3</option>
-                                        <option value="Class 4">Class 4</option>
-                                        <option value="Class 5">Class 5</option>
-                                        <option value="Class 6">Class 6</option>
-                                        <option value="Class 7">Class 7</option>
-                                        <option value="Class 8">Class 8</option>
-                                        <option value="Class 9">Class 9</option>
-                                        <option value="Class 10">Class 10</option>
-                                    </select>
+                                    {{ form.class_name }}
                                 </div>
                             </div>
                         </div>
@@ -146,20 +170,13 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="id_section" class="form-label">Section *</label>
-                                    <select name="section" id="id_section" class="form-select" required>
-                                        <option value="">Select Section</option>
-                                        <option value="A">A</option>
-                                        <option value="B">B</option>
-                                        <option value="C">C</option>
-                                        <option value="D">D</option>
-                                    </select>
+                                    {{ form.section }}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="id_roll_number" class="form-label">Roll Number *</label>
-                                    <input type="number" name="roll_number" id="id_roll_number" class="form-control" min="1"
-                                           placeholder="Enter roll number" required>
+                                    {{ form.roll_number }}
                                     <div class="form-text">Must be unique in your class</div>
                                 </div>
                             </div>
@@ -172,16 +189,14 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="id_father_name" class="form-label">Father's Name *</label>
-                                    <input type="text" name="father_name" id="id_father_name" class="form-control"
-                                           placeholder="Father's full name" required>
+                                    {{ form.father_name }}
                                     <div class="form-text">This will be displayed in your profile</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="id_mother_name" class="form-label">Mother's Name *</label>
-                                    <input type="text" name="mother_name" id="id_mother_name" class="form-control"
-                                           placeholder="Mother's full name" required>
+                                    {{ form.mother_name }}
                                     <div class="form-text">This will be displayed in your profile</div>
                                 </div>
                             </div>
@@ -191,15 +206,13 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="id_parent_phone" class="form-label">Parent's Phone *</label>
-                                    <input type="text" name="parent_phone" id="id_parent_phone" class="form-control"
-                                           placeholder="Parent's phone number" required>
+                                    {{ form.parent_phone }}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="id_parent_email" class="form-label">Parent's Email</label>
-                                    <input type="email" name="parent_email" id="id_parent_email" class="form-control"
-                                           placeholder="Parent's email address">
+                                    {{ form.parent_email }}
                                 </div>
                             </div>
                         </div>
@@ -212,8 +225,7 @@
                                         <i class="fas fa-home me-2 text-success"></i>
                                         Parent's Address
                                     </label>
-                                    <textarea name="parent_address" id="id_parent_address" class="form-control" rows="2"
-                                              placeholder="Enter parent's residential address (if different from yours)"></textarea>
+                                    {{ form.parent_address }}
                                     <div class="form-text">
                                         <i class="fas fa-info-circle me-1 text-info"></i>
                                         This address will be shown in your student profile
@@ -223,25 +235,21 @@
                         </div>
                     </div>
 
-                    <!-- Teacher Specific Fields -->
+                    <!-- Teacher Specific Fields - FIXED: Use Django form fields -->
                     <div id="teacher-fields" style="display: {% if form.user_type.value == 'teacher' %}block{% else %}none{% endif %};">
                         <h5 class="mb-3 text-primary mt-4">Teacher Information</h5>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="id_teacher_gender" class="form-label">Gender *</label>
-                                    <select name="teacher_gender" id="id_teacher_gender" class="form-select" required>
-                                        <option value="">Select Gender</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                    </select>
+                                    {{ form.teacher_gender }}
                                     <div class="form-text">This will be shown in your profile</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="id_teacher_dob" class="form-label">Date of Birth *</label>
-                                    <input type="date" name="teacher_dob" id="id_teacher_dob" class="form-control" required>
+                                    {{ form.teacher_dob }}
                                     <div class="form-text">This will be shown in your profile</div>
                                 </div>
                             </div>
@@ -251,17 +259,26 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="id_qualification" class="form-label">Qualification *</label>
-                                    <input type="text" name="qualification" id="id_qualification" class="form-control"
-                                           placeholder="e.g., M.A., B.Ed., M.Sc., etc." required>
+                                    {{ form.qualification }}
                                     <div class="form-text">This will be displayed in your profile</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="id_specialization" class="form-label">Specialization *</label>
-                                    <input type="text" name="specialization" id="id_specialization" class="form-control"
-                                           placeholder="e.g., Mathematics, Science, English, etc." required>
+                                    {{ form.specialization }}
                                     <div class="form-text">This will be displayed in your profile</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Joining Date Field -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_joining_date" class="form-label">Joining Date *</label>
+                                    {{ form.joining_date }}
+                                    <div class="form-text">Your teaching experience will be calculated from this date</div>
                                 </div>
                             </div>
                         </div>
@@ -344,11 +361,41 @@ document.addEventListener('DOMContentLoaded', function() {
         if (selectedType === 'student') {
             studentFields.style.display = 'block';
             teacherFields.style.display = 'none';
+
+            // Make student fields required
+            document.getElementById('id_gender').required = true;
+            document.getElementById('id_date_of_birth').required = true;
+            document.getElementById('id_class_name').required = true;
+            document.getElementById('id_section').required = true;
+            document.getElementById('id_roll_number').required = true;
+            document.getElementById('id_father_name').required = true;
+
+            // Make teacher fields not required
+            document.getElementById('id_teacher_gender').required = false;
+            document.getElementById('id_teacher_dob').required = false;
+            document.getElementById('id_qualification').required = false;
+            document.getElementById('id_specialization').required = false;
+            document.getElementById('id_joining_date').required = false;
         }
         // Show/hide teacher fields
         else if (selectedType === 'teacher') {
             studentFields.style.display = 'none';
             teacherFields.style.display = 'block';
+
+            // Make teacher fields required
+            document.getElementById('id_teacher_gender').required = true;
+            document.getElementById('id_teacher_dob').required = true;
+            document.getElementById('id_qualification').required = true;
+            document.getElementById('id_specialization').required = true;
+            document.getElementById('id_joining_date').required = true;
+
+            // Make student fields not required
+            document.getElementById('id_gender').required = false;
+            document.getElementById('id_date_of_birth').required = false;
+            document.getElementById('id_class_name').required = false;
+            document.getElementById('id_section').required = false;
+            document.getElementById('id_roll_number').required = false;
+            document.getElementById('id_father_name').required = false;
         }
         // Hide both for other types
         else {
@@ -396,12 +443,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const section = document.getElementById('id_section').value;
             const rollNumber = document.getElementById('id_roll_number').value;
             const fatherName = document.getElementById('id_father_name').value;
-            const motherName = document.getElementById('id_mother_name').value;
-            const parentPhone = document.getElementById('id_parent_phone').value;
 
-            if (!gender || !dob || !className || !section || !rollNumber || !fatherName || !motherName || !parentPhone) {
+            if (!gender || !dob || !className || !section || !rollNumber || !fatherName) {
                 isValid = false;
-                errorMessage = 'Please fill all required student information: Gender, Date of Birth, Class, Section, Roll Number, Father\'s Name, Mother\'s Name, and Parent\'s Phone.';
+                errorMessage = 'Please fill all required student information: Gender, Date of Birth, Class, Section, Roll Number, and Father\'s Name.';
             }
         }
         else if (userType === 'teacher') {
@@ -409,11 +454,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const dob = document.getElementById('id_teacher_dob').value;
             const qualification = document.getElementById('id_qualification').value;
             const specialization = document.getElementById('id_specialization').value;
+            const joiningDate = document.getElementById('id_joining_date').value;
 
-            if (!gender || !dob || !qualification || !specialization) {
+            if (!gender || !dob || !qualification || !specialization || !joiningDate) {
                 isValid = false;
-                errorMessage = 'Please fill all required teacher information: Gender, Date of Birth, Qualification, and Specialization.';
+                errorMessage = 'Please fill all required teacher information: Gender, Date of Birth, Qualification, Specialization, and Joining Date.';
             }
+        }
+
+        // Address validation for all users
+        const division = document.getElementById('id_division').value;
+        const district = document.getElementById('id_district').value;
+        const thana = document.getElementById('id_thana').value;
+        const areaVillage = document.getElementById('id_area_village').value;
+
+        if (!division || !district || !thana || !areaVillage) {
+            isValid = false;
+            errorMessage += '\n\nPlease fill all required address fields: Division, District, Thana/Upazila, and Area/Village.';
         }
 
         if (!isValid) {

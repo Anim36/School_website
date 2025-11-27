@@ -258,61 +258,152 @@
                             <!-- Teacher Specific Information -->
                             {% if user.user_type == 'teacher' and teacher %}
                             <div class="card mb-4">
-                                <div class="card-header bg-warning text-dark">
-                                    <h5 class="mb-0"><i class="fas fa-chalkboard-teacher me-2"></i>Professional Information</h5>
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0"><i class="fas fa-chalkboard-teacher me-2"></i>Teacher Information</h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Teacher ID</label>
-                                                <input type="text" class="form-control bg-light" value="{{ teacher.teacher_id }}" readonly>
-                                            </div>
+                                            <p><strong>Teacher ID:</strong> {{ teacher.teacher_id }}</p>
+                                            <p><strong>Gender:</strong> {{ teacher.gender }}</p>
+                                            <p><strong>Date of Birth:</strong> {{ teacher.date_of_birth|date:"F d, Y"|default:"Not provided" }}</p>
+                                            <p><strong>Qualification:</strong> {{ teacher.qualification|default:"Not provided" }}</p>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Gender</label>
-                                                <input type="text" class="form-control bg-light"
-                                                       value="{% if teacher.gender %}{{ teacher.gender }}{% else %}Not set{% endif %}" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Qualification</label>
-                                                <input type="text" class="form-control bg-light"
-                                                       value="{% if teacher.qualification %}{{ teacher.qualification }}{% else %}Not provided{% endif %}" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Specialization</label>
-                                                <input type="text" class="form-control bg-light"
-                                                       value="{% if teacher.specialization %}{{ teacher.specialization }}{% else %}Not provided{% endif %}" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Joining Date</label>
-                                                <input type="text" class="form-control bg-light" value="{{ teacher.joining_date|date:'F d, Y' }}" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Salary</label>
-                                                <input type="text" class="form-control bg-light"
-                                                       value="{% if teacher.salary %}৳ {{ teacher.salary }}{% else %}Not set{% endif %}" readonly>
-                                            </div>
+                                            <p><strong>Specialization:</strong> {{ teacher.specialization|default:"Not provided" }}</p>
+                                            <p><strong>Joining Date:</strong> {{ teacher.joining_date|date:"F d, Y" }}</p>
+                                            <p><strong>Experience:</strong>
+                                                <span class="badge bg-success fs-6">
+                                                    {{ teacher.get_experience }}
+                                                </span>
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             {% endif %}
+
+                            <!-- Address Information for All Users -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Address Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4">
+                                                    <strong>Division:</strong>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    {% if user.user_type == 'student' and student %}
+                                                        {{ student.division|default:"Not provided" }}
+                                                    {% elif user.user_type == 'teacher' and teacher %}
+                                                        {{ teacher.division|default:"Not provided" }}
+                                                    {% else %}
+                                                        Not provided
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4">
+                                                    <strong>District:</strong>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    {% if user.user_type == 'student' and student %}
+                                                        {{ student.district|default:"Not provided" }}
+                                                    {% elif user.user_type == 'teacher' and teacher %}
+                                                        {{ teacher.district|default:"Not provided" }}
+                                                    {% else %}
+                                                        Not provided
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4">
+                                                    <strong>Thana/Upazila:</strong>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    {% if user.user_type == 'student' and student %}
+                                                        {{ student.thana|default:"Not provided" }}
+                                                    {% elif user.user_type == 'teacher' and teacher %}
+                                                        {{ teacher.thana|default:"Not provided" }}
+                                                    {% else %}
+                                                        Not provided
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4">
+                                                    <strong>Area/Village:</strong>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    {% if user.user_type == 'student' and student %}
+                                                        {{ student.area_village|default:"Not provided" }}
+                                                    {% elif user.user_type == 'teacher' and teacher %}
+                                                        {{ teacher.area_village|default:"Not provided" }}
+                                                    {% else %}
+                                                        Not provided
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4">
+                                                    <strong>House Details:</strong>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    {% if user.user_type == 'student' and student %}
+                                                        {{ student.house_details|default:"Not provided" }}
+                                                    {% elif user.user_type == 'teacher' and teacher %}
+                                                        {{ teacher.house_details|default:"Not provided" }}
+                                                    {% else %}
+                                                        Not provided
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-sm-4">
+                                                    <strong>Postal Code:</strong>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    {% if user.user_type == 'student' and student %}
+                                                        {{ student.postal_code|default:"Not provided" }}
+                                                    {% elif user.user_type == 'teacher' and teacher %}
+                                                        {{ teacher.postal_code|default:"Not provided" }}
+                                                    {% else %}
+                                                        Not provided
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Complete Address -->
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <div class="p-3 bg-light rounded">
+                                                <h6 class="mb-2"><strong>Complete Address:</strong></h6>
+                                                <p class="mb-0">
+                                                    {% if user.user_type == 'student' and student %}
+                                                        {{ student.get_full_address }}
+                                                    {% elif user.user_type == 'teacher' and teacher %}
+                                                        {{ teacher.get_full_address }}
+                                                    {% else %}
+                                                        Address not provided
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

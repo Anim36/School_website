@@ -154,11 +154,107 @@
     </div>
 </div>
 
+<!-- Address Information -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i> Address Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Division:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ student.division|default:"Not provided" }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>District:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ student.district|default:"Not provided" }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Thana/Upazila:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ student.thana|default:"Not provided" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Area/Village:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ student.area_village|default:"Not provided" }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>House Details:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ student.house_details|default:"Not provided" }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Postal Code:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ student.postal_code|default:"Not provided" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complete Address -->
+                {% if student.get_full_address %}
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded">
+                            <h6 class="mb-2"><strong>Complete Address:</strong></h6>
+                            <p class="mb-0">{{ student.get_full_address }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Parent Address -->
+                {% if student.parent_address %}
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded">
+                            <h6 class="mb-2"><strong>Parent's Address:</strong></h6>
+                            <p class="mb-0">{{ student.parent_address }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Academic Information -->
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-warning text-dark">
+            <div class="card-header bg-primary text-white">
                 <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i> Academic Information</h5>
             </div>
             <div class="card-body">
@@ -236,5 +332,9 @@
 .card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
 }
 </style>

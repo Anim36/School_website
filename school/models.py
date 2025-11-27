@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from django.utils import timezone
 
 
 class SchoolInfo(models.Model):
@@ -29,6 +30,13 @@ class Student(models.Model):
     parent_email = models.EmailField(blank=True, verbose_name="Parent's Email")
     parent_address = models.TextField(blank=True, verbose_name="Parent's Address")
 
+    division = models.CharField(max_length=50, blank=True)
+    district = models.CharField(max_length=50, blank=True)
+    thana = models.CharField(max_length=50, blank=True)
+    postal_code = models.CharField(max_length=10, blank=True)
+    area_village = models.CharField(max_length=100, blank=True)
+    house_details = models.CharField(max_length=200, blank=True)
+
     admission_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
@@ -47,6 +55,24 @@ class Student(models.Model):
             info.append(f"Email: {self.parent_email}")
         return info
 
+    def get_full_address(self):
+        """সম্পূর্ণ ঠিকানা return করে"""
+        address_parts = []
+        if self.house_details:
+            address_parts.append(self.house_details)
+        if self.area_village:
+            address_parts.append(self.area_village)
+        if self.thana:
+            address_parts.append(self.thana)
+        if self.district:
+            address_parts.append(self.district)
+        if self.division:
+            address_parts.append(self.division)
+        if self.postal_code:
+            address_parts.append(f"Postal Code: {self.postal_code}")
+
+        return ", ".join(address_parts) if address_parts else "Address not provided"
+
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -55,13 +81,60 @@ class Teacher(models.Model):
     gender = models.CharField(max_length=10, choices=(('Male', 'Male'), ('Female', 'Female')), default='Male')
     qualification = models.CharField(max_length=100, blank=True)
     specialization = models.CharField(max_length=100, blank=True)
-    joining_date = models.DateField(auto_now_add=True)
+
+    # FIXED: Remove auto_now_add=True to allow manual date selection
+    joining_date = models.DateField()  # This will store the selected joining date
+
     salary = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # address fields
+    division = models.CharField(max_length=50, blank=True)
+    district = models.CharField(max_length=50, blank=True)
+    thana = models.CharField(max_length=50, blank=True)
+    postal_code = models.CharField(max_length=10, blank=True)
+    area_village = models.CharField(max_length=100, blank=True)
+    house_details = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
         return f"{self.user.get_full_name()} ({self.teacher_id})"
 
+    def get_experience(self):
+        """Calculate experience in years and months from the selected joining_date"""
+        if self.joining_date:
+            today = timezone.now().date()
+            delta = today - self.joining_date
 
+            years = delta.days // 365
+            months = (delta.days % 365) // 30
+
+            if years == 0:
+                return f"{months} months"
+            elif months == 0:
+                return f"{years} years"
+            else:
+                return f"{years} years {months} months"
+        return "Not specified"
+
+    def get_full_address(self):
+        """সম্পূর্ণ ঠিকানা return করে"""
+        address_parts = []
+        if self.house_details:
+            address_parts.append(self.house_details)
+        if self.area_village:
+            address_parts.append(self.area_village)
+        if self.thana:
+            address_parts.append(self.thana)
+        if self.district:
+            address_parts.append(self.district)
+        if self.division:
+            address_parts.append(self.division)
+        if self.postal_code:
+            address_parts.append(f"Postal Code: {self.postal_code}")
+
+        return ", ".join(address_parts) if address_parts else "Address not provided"
+
+
+# ... rest of your models remain the same
 class Class(models.Model):
     name = models.CharField(max_length=50)
     section = models.CharField(max_length=10)
