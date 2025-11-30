@@ -5,7 +5,6 @@ urlpatterns = [
     # Management URLs
     path('students/', views.student_management, name='student_management'),
     path('teachers/', views.teacher_management, name='teacher_management'),
-    path('routine/', views.class_routine, name='class_routine'),
     path('notices/', views.notice_board, name='notice_board'),
     path('results/', views.results, name='results'),
     path('attendance/', views.attendance_tracking, name='attendance'),
@@ -20,8 +19,19 @@ urlpatterns = [
     path('student/profile/', views.student_profile, name='student_profile'),
 
     # Class Routine Management URLs
+    path('routine/', views.class_routine, name='class_routine'),
     path('routine/add/', views.add_class_routine, name='add_class_routine'),
     path('routine/manage/', views.manage_class_routines, name='manage_class_routines'),
+    path('routine/edit/<int:routine_id>/', views.edit_class_routine, name='edit_class_routine'),
+    path('routine/delete/<int:routine_id>/', views.delete_class_routine, name='delete_class_routine'),
+    path('routine/periods/', views.manage_routine_periods, name='manage_routine_periods'),
+    path('routine/periods/edit/<int:period_id>/', views.edit_routine_period, name='edit_routine_period'),
+    path('routine/periods/delete/<int:period_id>/', views.delete_routine_period, name='delete_routine_period'),
+path('routine/create-default-periods/', views.create_default_periods, name='create_default_periods'),
+
+    # API URLs
+    path('routine/api/subjects/', views.get_subjects_by_class, name='get_subjects_by_class'),
+    path('routine/api/existing-routines/', views.get_existing_routines, name='get_existing_routines'),
 
     # New Pages
     path('about/', views.about, name='about'),

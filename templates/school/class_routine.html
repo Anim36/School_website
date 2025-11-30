@@ -1,135 +1,150 @@
 {% extends 'base.html' %}
 
-{% block title %}Class Routine - School Management System{% endblock %}
+{% block title %}Class Routine - {{ school_info.name }}{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-calendar-alt"></i> Class Routine & Schedule</h2>
-    {% if user.user_type == 'admin' or user.user_type == 'teacher' %}
-    <a href="#" class="btn btn-primary"><i class="fas fa-plus"></i> Add Routine</a>
-    {% endif %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2><i class="fas fa-calendar-alt me-2"></i> Class Routine</h2>
+            {% if user.user_type in 'admin teacher' %}
+            <div>
+                <a href="{% url 'add_class_routine' %}" class="btn btn-primary me-2">
+                    <i class="fas fa-plus me-1"></i> Add Routine
+                </a>
+                <a href="{% url 'manage_routine_periods' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-clock me-1"></i> Manage Periods
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">Weekly Class Schedule</h5>
+<!-- Class Selector -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <label for="classSelect" class="form-label">Select Class:</label>
+        <select class="form-select" id="classSelect">
+            <option value="">All Classes</option>
+            {% for class in classes %}
+            <option value="{{ class.id }}">{{ class.name }} - {{ class.section }}</option>
+            {% endfor %}
+        </select>
     </div>
+</div>
+
+<!-- Routine Table -->
+<div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead class="table-primary">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
                     <tr>
-                        <th>Time/Day</th>
-                        <th>Monday</th>
-                        <th>Tuesday</th>
-                        <th>Wednesday</th>
-                        <th>Thursday</th>
-                        <th>Friday</th>
-                        <th>Saturday</th>
+                        <th>Time</th>
+                        {% for day in days %}
+                        <th>{{ day }}</th>
+                        {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
+                    {% for period in periods %}
                     <tr>
-                        <td class="fw-bold">8:00 - 8:45</td>
-                        <td>Mathematics<br><small>Mr. Sharma</small></td>
-                        <td>Science<br><small>Mrs. Patel</small></td>
-                        <td>English<br><small>Ms. Davis</small></td>
-                        <td>Mathematics<br><small>Mr. Sharma</small></td>
-                        <td>Physics<br><small>Dr. Kumar</small></td>
-                        <td>Chemistry<br><small>Mrs. Gupta</small></td>
+                        <td class="fw-bold {% if period.is_break %}table-warning{% endif %}">
+                            {% if period.is_break %}
+                                <i class="fas fa-coffee me-2"></i>{{ period.break_name }}
+                            {% else %}
+                                <i class="fas fa-clock me-2"></i>{{ period }}
+                            {% endif %}
+                        </td>
+                        {% for day in days %}
+                        <td class="routine-cell" data-day="{{ day }}" data-period="{{ period.id }}">
+                            {% for class_id, class_data in routine_matrix.items %}
+                                {% if class_data and class_data.day and class_data.day.period.id %}
+                                    {% with routine=class_data.day.period.id %}
+                                        {% if routine %}
+                                        <div class="routine-item" data-class="{{ class_id }}">
+                                            <strong>{{ routine.subject }}</strong><br>
+                                            <small class="text-muted">{{ routine.teacher }}</small>
+                                            {% if user.user_type in 'admin teacher' %}
+                                            <div class="mt-1">
+                                                <a href="{% url 'edit_class_routine' routine.id %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'delete_class_routine' routine.id %}" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        {% endfor %}
                     </tr>
-                    <tr>
-                        <td class="fw-bold">8:45 - 9:30</td>
-                        <td>Science<br><small>Mrs. Patel</small></td>
-                        <td>Mathematics<br><small>Mr. Sharma</small></td>
-                        <td>History<br><small>Mr. Khan</small></td>
-                        <td>Biology<br><small>Dr. Singh</small></td>
-                        <td>English<br><small>Ms. Davis</small></td>
-                        <td>Mathematics<br><small>Mr. Sharma</small></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">9:30 - 10:15</td>
-                        <td>English<br><small>Ms. Davis</small></td>
-                        <td>Physics<br><small>Dr. Kumar</small></td>
-                        <td>Mathematics<br><small>Mr. Sharma</small></td>
-                        <td>Chemistry<br><small>Mrs. Gupta</small></td>
-                        <td>Science<br><small>Mrs. Patel</small></td>
-                        <td>Physical Education</td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">10:15 - 10:30</td>
-                        <td colspan="6" class="text-center bg-light"><strong>BREAK</strong></td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">10:30 - 11:15</td>
-                        <td>Geography<br><small>Mr. Joshi</small></td>
-                        <td>English<br><small>Ms. Davis</small></td>
-                        <td>Science<br><small>Mrs. Patel</small></td>
-                        <td>Mathematics<br><small>Mr. Sharma</small></td>
-                        <td>Computer<br><small>Mr. Verma</small></td>
-                        <td>Art & Craft</td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold">11:15 - 12:00</td>
-                        <td>Computer<br><small>Mr. Verma</small></td>
-                        <td>Biology<br><small>Dr. Singh</small></td>
-                        <td>Physics<br><small>Dr. Kumar</small></td>
-                        <td>English<br><small>Ms. Davis</small></td>
-                        <td>Mathematics<br><small>Mr. Sharma</small></td>
-                        <td>Music</td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Today's Classes</h5>
-            </div>
-            <div class="card-body">
-                <div class="class-item border-bottom pb-2 mb-2">
-                    <h6 class="text-primary">Mathematics</h6>
-                    <p class="mb-1"><strong>Time:</strong> 8:00 AM - 8:45 AM</p>
-                    <p class="mb-1"><strong>Teacher:</strong> Mr. Sharma</p>
-                </div>
-                <div class="class-item border-bottom pb-2 mb-2">
-                    <h6 class="text-success">Science</h6>
-                    <p class="mb-1"><strong>Time:</strong> 8:45 AM - 9:30 AM</p>
-                    <p class="mb-1"><strong>Teacher:</strong> Mrs. Patel</p>
-                </div>
-                <div class="class-item border-bottom pb-2 mb-2">
-                    <h6 class="text-info">English</h6>
-                    <p class="mb-1"><strong>Time:</strong> 9:30 AM - 10:15 AM</p>
-                    <p class="mb-1"><strong>Teacher:</strong> Ms. Davis</p>
-                </div>
-                <div class="class-item">
-                    <h6 class="text-warning">Geography</h6>
-                    <p class="mb-1"><strong>Time:</strong> 10:30 AM - 11:15 AM</p>
-                    <p class="mb-1"><strong>Teacher:</strong> Mr. Joshi</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Quick Actions</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="#" class="btn btn-outline-primary">Download Routine</a>
-                    <a href="#" class="btn btn-outline-success">Print Routine</a>
-                    {% if user.user_type == 'teacher' %}
-                    <a href="#" class="btn btn-outline-info">My Schedule</a>
-                    {% endif %}
-                    <a href="#" class="btn btn-outline-warning">Request Change</a>
-                </div>
-            </div>
-        </div>
+<!-- Instructions -->
+<div class="card mt-4">
+    <div class="card-body">
+        <h5><i class="fas fa-info-circle me-2"></i> How to Use</h5>
+        <ul>
+            <li>Select a specific class from the dropdown to filter the routine</li>
+            <li>Yellow rows indicate break times</li>
+            {% if user.user_type in 'admin teacher' %}
+            <li>Click the edit/delete buttons to manage routines</li>
+            <li>Use "Manage Periods" to set up time slots and breaks</li>
+            {% endif %}
+        </ul>
     </div>
 </div>
+
+<style>
+.routine-cell {
+    min-height: 80px;
+    vertical-align: top;
+}
+
+.routine-item {
+    background: #f8f9fa;
+    border-left: 4px solid #0d6efd;
+    padding: 8px;
+    margin: 2px 0;
+    border-radius: 4px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.routine-item:hover {
+    background: #e9ecef;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const classSelect = document.getElementById('classSelect');
+
+    classSelect.addEventListener('change', function() {
+        const selectedClass = this.value;
+        const routineItems = document.querySelectorAll('.routine-item');
+
+        routineItems.forEach(item => {
+            if (!selectedClass || item.getAttribute('data-class') === selectedClass) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

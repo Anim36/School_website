@@ -16,6 +16,13 @@ class TeacherAdmin(admin.ModelAdmin):
     list_display = ['teacher_id', 'user', 'qualification', 'specialization']
     search_fields = ['teacher_id', 'user__first_name', 'user__last_name']
 
+
+@admin.register(RoutinePeriod)
+class RoutinePeriodAdmin(admin.ModelAdmin):
+    list_display = ['start_time', 'end_time', 'is_break', 'break_name', 'order']
+    list_filter = ['is_break']
+    ordering = ['order', 'start_time']
+
 @admin.register(Class)
 class ClassAdmin(admin.ModelAdmin):
     list_display = ['name', 'section', 'class_teacher']
@@ -28,8 +35,9 @@ class SubjectAdmin(admin.ModelAdmin):
 
 @admin.register(ClassRoutine)
 class ClassRoutineAdmin(admin.ModelAdmin):
-    list_display = ['class_name', 'day', 'subject', 'start_time', 'end_time']
-    list_filter = ['class_name', 'day']
+    list_display = ['class_name', 'day', 'period', 'subject', 'teacher']  # ✅ period use korbo
+    list_filter = ['class_name', 'day', 'teacher']
+    search_fields = ['class_name__name', 'subject__name', 'teacher__user__first_name', 'teacher__user__last_name']
 
 @admin.register(Notice)
 class NoticeAdmin(admin.ModelAdmin):
@@ -61,6 +69,13 @@ class BookAdmin(admin.ModelAdmin):
 class BookIssueAdmin(admin.ModelAdmin):
     list_display = ['book', 'student', 'issue_date', 'return_date', 'returned']
     list_filter = ['returned', 'issue_date']
+
+
+@admin.register(Gallery)
+class GalleryAdmin(admin.ModelAdmin):
+    list_display = ['title', 'category', 'uploaded_by', 'upload_date', 'is_active']
+    list_filter = ['category', 'is_active', 'upload_date']
+    search_fields = ['title', 'description']
 
 
 @admin.register(Contact)

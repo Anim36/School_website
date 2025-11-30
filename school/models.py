@@ -134,7 +134,6 @@ class Teacher(models.Model):
         return ", ".join(address_parts) if address_parts else "Address not provided"
 
 
-# ... rest of your models remain the same
 class Class(models.Model):
     name = models.CharField(max_length=50)
     section = models.CharField(max_length=10)
@@ -145,6 +144,7 @@ class Class(models.Model):
 
 
 class Subject(models.Model):
+    # ✅ Text field রাখুন (choices এর পরিবর্তে)
     name = models.CharField(max_length=100)
     class_name = models.ForeignKey(Class, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
@@ -153,22 +153,50 @@ class Subject(models.Model):
         return self.name
 
 
+# ✅ NEW ROUTINE SYSTEM MODELS
+class RoutinePeriod(models.Model):
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    is_break = models.BooleanField(default=False)
+    break_name = models.CharField(max_length=50, blank=True, null=True)
+    order = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'start_time']
+        verbose_name = "Routine Period"
+        verbose_name_plural = "Routine Periods"
+
+    def __str__(self):
+        if self.is_break:
+            return f"{self.break_name} ({self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')})"
+        return f"{self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"
+
+
 class ClassRoutine(models.Model):
-    class_name = models.ForeignKey(Class, on_delete=models.CASCADE)
+    class_name = models.ForeignKey(Class, on_delete=models.CASCADE, verbose_name="Class")
     day = models.CharField(max_length=10, choices=(
+        ('Sunday', 'Sunday'),
         ('Monday', 'Monday'),
         ('Tuesday', 'Tuesday'),
         ('Wednesday', 'Wednesday'),
         ('Thursday', 'Thursday'),
-        ('Friday', 'Friday'),
-        ('Saturday', 'Saturday'),
     ))
+    period = models.ForeignKey(RoutinePeriod, on_delete=models.CASCADE, verbose_name="Time Period")
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('class_name', 'day', 'period')
+        ordering = ['class_name', 'day', 'period__order']
+        verbose_name = "Class Routine"
+        verbose_name_plural = "Class Routines"
 
     def __str__(self):
-        return f"{self.class_name} - {self.day}"
+        return f"{self.class_name} - {self.day} - {self.period}"
+
+    def get_time_display(self):
+        """Helper method to display time"""
+        return str(self.period)
 
 
 class Notice(models.Model):

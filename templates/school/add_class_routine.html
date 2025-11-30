@@ -1,142 +1,145 @@
 {% extends 'base.html' %}
 
-{% block title %}Add Class Routine - School Management System{% endblock %}
+{% block title %}Add Class Routine - {{ school_info.name }}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-plus me-2"></i> Add Class Routine</h2>
+            <div>
+                <a href="{% url 'class_routine' %}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-calendar-alt me-1"></i> View Routine
+                </a>
+                <a href="{% url 'manage_class_routines' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-cog me-1"></i> Manage Routines
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Single Routine Form -->
+    <div class="col-md-6 mb-4">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h4 class="card-title mb-0"><i class="fas fa-plus"></i> Add Class Routine</h4>
+                <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i> Add Single Routine</h5>
             </div>
             <div class="card-body">
-                <!-- Debug Information -->
-                {% if user.user_type == 'teacher' %}
-                <div class="alert alert-info">
-                    <h6><i class="fas fa-info-circle"></i> Teacher Information</h6>
-                    <p class="mb-0">
-                        <strong>Teacher:</strong> {{ user.get_full_name }}<br>
-                        <strong>Available Subjects:</strong>
-                        {% if form.subject.field.queryset.exists %}
-                            {{ form.subject.field.queryset.count }} subjects
-                        {% else %}
-                            No existing subjects
-                        {% endif %}
-                    </p>
-                </div>
-                {% endif %}
-
-                <form method="post" id="routineForm">
+                <form method="post" id="singleRoutineForm">
                     {% csrf_token %}
+                    <input type="hidden" name="single_routine" value="true">
 
-                    <!-- CSRF Token Check -->
-                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-
-                    {% if form.errors %}
-                    <div class="alert alert-danger">
-                        <h6><i class="fas fa-exclamation-triangle"></i> Form Errors:</h6>
-                        <ul class="mb-0">
-                            {% for field in form %}
-                                {% if field.errors %}
-                                <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
-                                {% endif %}
-                            {% endfor %}
-                            {% for error in form.non_field_errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
+                    <div class="mb-3">
+                        <label class="form-label">Class *</label>
+                        {{ single_form.class_name }}
                     </div>
-                    {% endif %}
 
-                    {% if messages %}
-                    <div class="messages">
-                        {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        {% endfor %}
+                    <div class="mb-3">
+                        <label class="form-label">Day *</label>
+                        {{ single_form.day }}
                     </div>
-                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Period *</label>
+                        {{ single_form.period }}
+                    </div>
+
+                    <!-- ✅ CHANGED: Subject field text input -->
+                    <div class="mb-3">
+                        <label class="form-label">Subject *</label>
+                        {{ single_form.subject }}
+                        <div class="form-text">Enter subject name (e.g., Mathematics, Science, English)</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Teacher *</label>
+                        {{ single_form.teacher }}
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Add Single Routine
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Routine Form -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-table me-2"></i> Add Bulk Routines (Excel Style)</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" id="bulkRoutineForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="bulk_routine" value="true">
 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Class *</label>
-                                {{ form.class_name }}
-                                {% if form.class_name.help_text %}
-                                <div class="form-text">{{ form.class_name.help_text }}</div>
-                                {% endif %}
+                                {{ bulk_form.class_name }}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Day *</label>
-                                {{ form.day }}
-                                {% if form.day.help_text %}
-                                <div class="form-text">{{ form.day.help_text }}</div>
-                                {% endif %}
+                                {{ bulk_form.day }}
                             </div>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Subject</label>
-                                {{ form.subject }}
-                                {% if form.subject.help_text %}
-                                <div class="form-text">{{ form.subject.help_text }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">{{ form.new_subject.label }}</label>
-                                {{ form.new_subject }}
-                                <div class="form-text">Enter a new subject name if not in the list above</div>
-                            </div>
-                        </div>
+                    <!-- Routine Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th width="30%">Time Period</th>
+                                    <th width="35%">Subject</th>
+                                    <th width="35%">Teacher</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for period in periods %}
+                                <tr>
+                                    <td class="fw-bold">
+                                        <i class="fas fa-clock me-2"></i>{{ period }}
+                                    </td>
+                                    <!-- ✅ CHANGED: Subject field text input -->
+                                    <td>
+                                        <input type="text"
+                                               name="period_{{ period.id }}_subject"
+                                               class="form-control subject-input"
+                                               data-period="{{ period.id }}"
+                                               placeholder="e.g., Mathematics, Science"
+                                               maxlength="100">
+                                    </td>
+                                    <td>
+                                        <select name="period_{{ period.id }}_teacher"
+                                                class="form-select teacher-select"
+                                                data-period="{{ period.id }}">
+                                            <option value="">Select Teacher</option>
+                                            {% for teacher in teachers %}
+                                            <option value="{{ teacher.id }}">
+                                                {{ teacher.user.get_full_name }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="mb-3">
-                                <label class="form-label">Start Time *</label>
-                                {{ form.start_time }}
-                                {% if form.start_time.help_text %}
-                                <div class="form-text">{{ form.start_time.help_text }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="mb-3">
-                                <label class="form-label">End Time *</label>
-                                {{ form.end_time }}
-                                {% if form.end_time.help_text %}
-                                <div class="form-text">{{ form.end_time.help_text }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="alert alert-info">
-                        <h6><i class="fas fa-info-circle"></i> Instructions:</h6>
-                        <ul class="mb-0">
-                            <li>Select the class and day for the routine</li>
-                            <li>Either select an existing subject OR enter a new subject name</li>
-                            <li>Set the start and end time for the class</li>
-                            <li>Ensure end time is after start time</li>
-                            <li>Fields marked with * are required</li>
-                        </ul>
-                    </div>
-
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'class_routine' %}" class="btn btn-secondary me-md-2">
-                            <i class="fas fa-times"></i> Cancel
-                        </a>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <i class="fas fa-plus"></i> Add Routine
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-2"></i>Save All Routines
                         </button>
                     </div>
                 </form>
@@ -145,95 +148,208 @@
     </div>
 </div>
 
-<!-- JavaScript for dynamic form behavior -->
+<!-- Instructions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> How to Use</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Single Routine Method:</h6>
+                        <ul>
+                            <li>Add one routine entry at a time</li>
+                            <li>Perfect for adding or modifying specific periods</li>
+                            <li>Automatic duplicate checking</li>
+                            <li><strong>Type any subject name</strong> (e.g., Mathematics, Science, English)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Bulk Routine Method:</h6>
+                        <ul>
+                            <li>Fill in all periods for a class and day at once</li>
+                            <li>Excel-like interface</li>
+                            <li>Only filled periods will be saved</li>
+                            <li>Perfect for setting up new class routines</li>
+                            <li><strong>Type subject names directly</strong> in the text fields</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.subject-input, .teacher-select {
+    font-size: 0.9rem;
+}
+
+.table th {
+    background-color: #2c3e50;
+    color: white;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.subject-input {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+}
+
+.subject-input:focus {
+    background-color: #ffffff;
+    border-color: #0d6efd;
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('routineForm');
-    const subjectSelect = document.querySelector('select[name="subject"]');
-    const newSubjectInput = document.querySelector('input[name="new_subject"]');
-    const submitBtn = document.getElementById('submitBtn');
+    const bulkClassSelect = document.getElementById('bulk_class_name');
+    const bulkDaySelect = document.getElementById('bulk_day');
+    const subjectInputs = document.querySelectorAll('.subject-input');
+    const teacherSelects = document.querySelectorAll('.teacher-select');
 
-    // Show/hide new subject input based on subject selection
-    if (subjectSelect && newSubjectInput) {
-        subjectSelect.addEventListener('change', function() {
-            if (this.value === '') {
-                // If no subject selected, show new subject input
-                newSubjectInput.style.display = 'block';
-                newSubjectInput.required = true;
+    // Load existing routines when class or day changes
+    function loadExistingRoutines() {
+        const classId = bulkClassSelect.value;
+        const day = bulkDaySelect.value;
+
+        if (classId && day) {
+            fetch(`/school/routine/api/existing-routines/?class_id=${classId}&day=${day}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear all inputs first
+                    subjectInputs.forEach(input => input.value = '');
+                    teacherSelects.forEach(select => select.value = '');
+
+                    // Populate with existing data
+                    Object.keys(data).forEach(periodId => {
+                        const routine = data[periodId];
+                        const subjectInput = document.querySelector(`input[data-period="${periodId}"].subject-input`);
+                        const teacherSelect = document.querySelector(`select[data-period="${periodId}"].teacher-select`);
+
+                        if (subjectInput && teacherSelect) {
+                            subjectInput.value = routine.subject_name || '';
+                            teacherSelect.value = routine.teacher_id || '';
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading routines:', error));
+        }
+    }
+
+    // Event listeners
+    bulkClassSelect.addEventListener('change', loadExistingRoutines);
+    bulkDaySelect.addEventListener('change', loadExistingRoutines);
+
+    // Auto-suggest common subjects
+    const commonSubjects = [
+        'Mathematics', 'Science', 'English', 'Bangla', 'Social Science',
+        'Religion', 'ICT', 'Physics', 'Chemistry', 'Biology',
+        'Higher Mathematics', 'Bangla 1st Paper', 'Bangla 2nd Paper',
+        'English 1st Paper', 'English 2nd Paper', 'General Science'
+    ];
+
+    subjectInputs.forEach(input => {
+        // Add datalist for auto-suggest
+        const datalist = document.createElement('datalist');
+        datalist.id = 'subject-suggestions';
+
+        commonSubjects.forEach(subject => {
+            const option = document.createElement('option');
+            option.value = subject;
+            datalist.appendChild(option);
+        });
+
+        document.body.appendChild(datalist);
+        input.setAttribute('list', 'subject-suggestions');
+
+        // Real-time validation
+        input.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                this.style.borderColor = '#28a745';
             } else {
-                // If subject selected, hide new subject input
-                newSubjectInput.style.display = 'none';
-                newSubjectInput.required = false;
-                newSubjectInput.value = '';
+                this.style.borderColor = '#ced4da';
+            }
+        });
+    });
+
+    // Form validation
+    document.getElementById('bulkRoutineForm').addEventListener('submit', function(e) {
+        const classSelected = bulkClassSelect.value;
+        const daySelected = bulkDaySelect.value;
+
+        if (!classSelected || !daySelected) {
+            e.preventDefault();
+            alert('Please select both class and day before saving.');
+            return false;
+        }
+
+        // Check if at least one period is filled
+        let atLeastOneFilled = false;
+        let emptySubjects = [];
+
+        subjectInputs.forEach((input, index) => {
+            const teacherSelect = teacherSelects[index];
+            const subjectValue = input.value.trim();
+            const teacherValue = teacherSelect.value;
+
+            // If subject is filled but teacher is not
+            if (subjectValue && !teacherValue) {
+                emptySubjects.push(input.getAttribute('data-period'));
+            }
+
+            // If both are filled
+            if (subjectValue && teacherValue) {
+                atLeastOneFilled = true;
             }
         });
 
-        // Trigger change event on page load
-        subjectSelect.dispatchEvent(new Event('change'));
-    }
-
-    // Form submission validation
-    form.addEventListener('submit', function(e) {
-        // Show loading state
-        if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-            submitBtn.disabled = true;
-        }
-
-        // Basic client-side validation
-        const classSelect = document.querySelector('select[name="class_name"]');
-        const daySelect = document.querySelector('select[name="day"]');
-        const startTime = document.querySelector('input[name="start_time"]');
-        const endTime = document.querySelector('input[name="end_time"]');
-
-        let isValid = true;
-        let errorMessage = '';
-
-        if (!classSelect.value) {
-            isValid = false;
-            errorMessage = 'Please select a class';
-        } else if (!daySelect.value) {
-            isValid = false;
-            errorMessage = 'Please select a day';
-        } else if (!subjectSelect.value && !newSubjectInput.value) {
-            isValid = false;
-            errorMessage = 'Please either select a subject or enter a new subject name';
-        } else if (!startTime.value) {
-            isValid = false;
-            errorMessage = 'Please enter start time';
-        } else if (!endTime.value) {
-            isValid = false;
-            errorMessage = 'Please enter end time';
-        } else if (startTime.value && endTime.value && startTime.value >= endTime.value) {
-            isValid = false;
-            errorMessage = 'End time must be after start time';
-        }
-
-        if (!isValid) {
+        if (!atLeastOneFilled) {
             e.preventDefault();
-            alert('Error: ' + errorMessage);
-            // Reset button state
-            if (submitBtn) {
-                submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Routine';
-                submitBtn.disabled = false;
-            }
+            alert('Please fill in at least one period (both subject and teacher) before saving.');
+            return false;
+        }
+
+        if (emptySubjects.length > 0) {
+            e.preventDefault();
+            alert('Please select teachers for all filled subjects.');
+            return false;
+        }
+    });
+
+    // Single form validation
+    document.getElementById('singleRoutineForm').addEventListener('submit', function(e) {
+        const subjectInput = document.querySelector('#singleRoutineForm input[name="subject"]');
+        if (subjectInput && !subjectInput.value.trim()) {
+            e.preventDefault();
+            alert('Please enter a subject name.');
+            subjectInput.focus();
+            return false;
         }
     });
 });
 </script>
-
-<style>
-.select-with-input {
-    margin-bottom: 10px;
-}
-
-input[name="new_subject"] {
-    transition: all 0.3s ease;
-}
-
-.form-text {
-    font-size: 0.875em;
-    color: #6c757d;
-}
-</style>
 {% endblock %}

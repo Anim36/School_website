@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from .models import *
-from .forms import NoticeForm, ClassRoutineForm, GalleryForm, ContactForm, AdmissionForm
+from .forms import NoticeForm, ClassRoutineForm, GalleryForm, ContactForm, AdmissionForm, RoutinePeriodForm, \
+    BulkRoutineForm
 
 
 def home(request):
@@ -215,8 +216,270 @@ def teacher_management(request):
 
 
 @login_required
+def manage_routine_periods(request):
+    """Manage routine periods (time slots)"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    periods = RoutinePeriod.objects.all()
+
+    if request.method == 'POST':
+        form = RoutinePeriodForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Routine period added successfully!')
+            return redirect('manage_routine_periods')
+    else:
+        form = RoutinePeriodForm()
+
+    context = {
+        'periods': periods,
+        'form': form
+    }
+    return render(request, 'school/manage_routine_periods.html', context)
+
+
+@login_required
+def edit_routine_period(request, period_id):
+    """Edit routine period"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    period = get_object_or_404(RoutinePeriod, id=period_id)
+
+    if request.method == 'POST':
+        form = RoutinePeriodForm(request.POST, instance=period)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Routine period updated successfully!')
+            return redirect('manage_routine_periods')
+    else:
+        form = RoutinePeriodForm(instance=period)
+
+    context = {
+        'form': form,
+        'period': period
+    }
+    return render(request, 'school/edit_routine_period.html', context)
+
+
+@login_required
+def delete_routine_period(request, period_id):
+    """Delete routine period"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    period = get_object_or_404(RoutinePeriod, id=period_id)
+
+    if request.method == 'POST':
+        # Check if this period is used in any routine
+        if ClassRoutine.objects.filter(period=period).exists():
+            messages.error(request, 'Cannot delete this period because it is used in class routines!')
+        else:
+            period.delete()
+            messages.success(request, 'Routine period deleted successfully!')
+        return redirect('manage_routine_periods')
+
+    context = {
+        'period': period
+    }
+    return render(request, 'school/delete_routine_period.html', context)
+
+
+@login_required
+def add_class_routine(request):
+    """Add class routine with improved interface"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    # Check if RoutinePeriod table exists and has data
+    try:
+        periods = RoutinePeriod.objects.filter(is_break=False)
+        if not periods.exists():
+            messages.warning(request, 'No routine periods found. Please add periods first.')
+            return redirect('manage_routine_periods')
+    except:
+        messages.error(request, 'Routine system is not set up properly.')
+        return redirect('class_routine')
+
+    single_form = ClassRoutineForm()
+    bulk_form = BulkRoutineForm()
+
+    # Get data for template
+    classes = Class.objects.all()
+    teachers = Teacher.objects.all()
+    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+    # Handle single routine form
+    if request.method == 'POST' and 'single_routine' in request.POST:
+        single_form = ClassRoutineForm(request.POST)
+        if single_form.is_valid():
+            class_name = single_form.cleaned_data['class_name']
+            day = single_form.cleaned_data['day']
+            period = single_form.cleaned_data['period']
+            subject_name = single_form.cleaned_data['subject']  # ✅ Text input থেকে subject name নিন
+            teacher = single_form.cleaned_data['teacher']
+
+            # Check for duplicate
+            if ClassRoutine.objects.filter(class_name=class_name, day=day, period=period).exists():
+                messages.error(request, f'A routine already exists for {class_name} on {day} during {period}.')
+            else:
+                # ✅ Subject create বা get করুন
+                subject, created = Subject.objects.get_or_create(
+                    name=subject_name,
+                    class_name=class_name,
+                    defaults={'teacher': teacher}
+                )
+
+                # ClassRoutine create করুন
+                ClassRoutine.objects.create(
+                    class_name=class_name,
+                    day=day,
+                    period=period,
+                    subject=subject,
+                    teacher=teacher
+                )
+
+                messages.success(request, f'Routine added successfully for {class_name} on {day}!')
+                return redirect('add_class_routine')
+
+    # Handle bulk routine form
+    elif request.method == 'POST' and 'bulk_routine' in request.POST:
+        bulk_form = BulkRoutineForm(request.POST)
+        if bulk_form.is_valid():
+            class_name = bulk_form.cleaned_data['class_name']
+            day = bulk_form.cleaned_data['day']
+
+            periods = RoutinePeriod.objects.filter(is_break=False).order_by('order')
+            routines_created = 0
+
+            for period in periods:
+                subject_field = f'period_{period.id}_subject'
+                teacher_field = f'period_{period.id}_teacher'
+
+                subject_name = bulk_form.cleaned_data.get(subject_field)  # ✅ Text input থেকে subject name
+                teacher = bulk_form.cleaned_data.get(teacher_field)
+
+                # Only create routine if both subject name and teacher are provided
+                if subject_name and teacher:  # ✅ subject_name check করুন (empty string check)
+                    subject_name = subject_name.strip()
+                    if subject_name:  # ✅ শুধু whitespace না হলে
+                        # Check for duplicate
+                        if not ClassRoutine.objects.filter(class_name=class_name, day=day, period=period).exists():
+                            # ✅ Subject create বা get করুন
+                            subject, created = Subject.objects.get_or_create(
+                                name=subject_name,
+                                class_name=class_name,
+                                defaults={'teacher': teacher}
+                            )
+
+                            ClassRoutine.objects.create(
+                                class_name=class_name,
+                                day=day,
+                                period=period,
+                                subject=subject,
+                                teacher=teacher
+                            )
+                            routines_created += 1
+
+            if routines_created > 0:
+                messages.success(request,
+                                 f'Successfully created {routines_created} routines for {class_name} on {day}!')
+            else:
+                messages.warning(request, 'No routines were created. Please fill in at least one period.')
+
+            return redirect('add_class_routine')
+
+    context = {
+        'single_form': single_form,
+        'bulk_form': bulk_form,
+        'classes': classes,
+        'teachers': teachers,
+        'days': days,
+        'periods': periods,
+    }
+
+    return render(request, 'school/add_class_routine.html', context)
+
+
+@login_required
+def edit_class_routine(request, routine_id):
+    """Edit class routine"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    routine = get_object_or_404(ClassRoutine, id=routine_id)
+
+    if request.method == 'POST':
+        form = ClassRoutineForm(request.POST, instance=routine)
+        if form.is_valid():
+            # ✅ Subject update করার logic
+            subject_name = form.cleaned_data['subject']  # Text input থেকে subject name
+            teacher = form.cleaned_data['teacher']
+
+            # Subject update বা create করুন
+            subject, created = Subject.objects.get_or_create(
+                name=subject_name,
+                class_name=routine.class_name,
+                defaults={'teacher': teacher}
+            )
+
+            # Routine update করুন
+            routine.subject = subject
+            routine.teacher = teacher
+            routine.day = form.cleaned_data['day']
+            routine.period = form.cleaned_data['period']
+            routine.save()
+
+            messages.success(request, 'Class routine updated successfully!')
+            return redirect('manage_class_routines')
+    else:
+        # Initial form load-এ current subject name set করুন
+        form = ClassRoutineForm(instance=routine)
+        form.fields['subject'].initial = routine.subject.name  # ✅ Text field-এ current subject name set করুন
+
+    context = {
+        'form': form,
+        'routine': routine
+    }
+    return render(request, 'school/edit_class_routine.html', context)
+
+
+@login_required
+def delete_class_routine(request, routine_id):
+    """Delete class routine"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    routine = get_object_or_404(ClassRoutine, id=routine_id)
+
+    if request.method == 'POST':
+        routine.delete()
+        messages.success(request, 'Class routine deleted successfully!')
+        return redirect('manage_class_routines')
+
+    context = {
+        'routine': routine
+    }
+    return render(request, 'school/delete_class_routine.html', context)
+
+
+@login_required
 def class_routine(request):
-    routines = ClassRoutine.objects.all().order_by('class_name', 'day', 'start_time')
+    """Display class routine in Excel-like table"""
+    try:
+        # Check if RoutinePeriod table exists
+        RoutinePeriod.objects.exists()
+    except:
+        messages.error(request, 'Routine system is being set up. Please try again in a moment.')
+        return render(request, 'school/class_routine.html', {
+            'routine_matrix': {},
+            'periods': [],
+            'days': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],
+            'classes': Class.objects.all(),
+        })
+
+    routines = ClassRoutine.objects.all().select_related('class_name', 'period', 'subject', 'teacher')
 
     if request.user.user_type == 'student':
         try:
@@ -224,8 +487,120 @@ def class_routine(request):
             routines = routines.filter(class_name__name=student.class_name)
         except Student.DoesNotExist:
             routines = ClassRoutine.objects.none()
+    elif request.user.user_type == 'teacher':
+        try:
+            teacher = Teacher.objects.get(user=request.user)
+            routines = routines.filter(teacher=teacher)
+        except Teacher.DoesNotExist:
+            routines = ClassRoutine.objects.none()
 
-    return render(request, 'school/class_routine.html', {'routines': routines})
+    # Organize data for template
+    periods = RoutinePeriod.objects.all()
+    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday']
+    classes = Class.objects.all()
+
+    # Create routine matrix
+    routine_matrix = {}
+    for class_obj in classes:
+        routine_matrix[class_obj.id] = {}
+        for day in days:
+            routine_matrix[class_obj.id][day] = {}
+            for period in periods:
+                try:
+                    routine = routines.get(class_name=class_obj, day=day, period=period)
+                    routine_matrix[class_obj.id][day][period.id] = {
+                        'subject': routine.subject.name,
+                        'teacher': routine.teacher.user.get_full_name(),
+                        'id': routine.id
+                    }
+                except ClassRoutine.DoesNotExist:
+                    routine_matrix[class_obj.id][day][period.id] = None
+
+    context = {
+        'routine_matrix': routine_matrix,
+        'periods': periods,
+        'days': days,
+        'classes': classes,
+    }
+    return render(request, 'school/class_routine.html', context)
+
+
+@login_required
+def manage_class_routines(request):
+    """Manage all class routines"""
+    if request.user.user_type not in ['admin', 'teacher']:
+        return HttpResponseForbidden("You don't have permission to access this page.")
+
+    routines = ClassRoutine.objects.all().select_related('class_name', 'period', 'subject', 'teacher')
+
+    if request.user.user_type == 'teacher':
+        try:
+            teacher = Teacher.objects.get(user=request.user)
+            routines = routines.filter(teacher=teacher)
+        except Teacher.DoesNotExist:
+            routines = ClassRoutine.objects.none()
+
+    context = {
+        'routines': routines
+    }
+    return render(request, 'school/manage_class_routines.html', context)
+
+
+@login_required
+def get_routine_data(request):
+    """API endpoint to get routine data for specific class and day"""
+    class_id = request.GET.get('class_id')
+    day = request.GET.get('day')
+
+    routines = ClassRoutine.objects.filter(
+        class_name_id=class_id,
+        day=day
+    ).select_related('period', 'subject', 'teacher')
+
+    data = {}
+    for routine in routines:
+        data[routine.period.id] = {
+            'subject': routine.subject.name,
+            'teacher': routine.teacher.user.get_full_name(),
+            'routine_id': routine.id
+        }
+
+    return JsonResponse(data)
+
+
+@login_required
+def get_subjects_by_class(request):
+    """API endpoint to get subjects by class"""
+    class_id = request.GET.get('class_id')
+    if class_id:
+        subjects = Subject.objects.filter(class_name_id=class_id)
+        data = {str(subject.id): str(subject) for subject in subjects}
+    else:
+        data = {}
+
+    return JsonResponse(data)
+
+
+@login_required
+def get_existing_routines(request):
+    """API endpoint to get existing routines for a class and day"""
+    class_id = request.GET.get('class_id')
+    day = request.GET.get('day')
+
+    routines = {}
+    if class_id and day:
+        existing_routines = ClassRoutine.objects.filter(
+            class_name_id=class_id,
+            day=day
+        ).select_related('period', 'subject', 'teacher')
+
+        for routine in existing_routines:
+            routines[str(routine.period.id)] = {
+                'subject_name': str(routine.subject.name),  # ✅ Subject name পাঠান
+                'teacher_name': str(routine.teacher.user.get_full_name()),
+            }
+
+    return JsonResponse(routines)
 
 
 @login_required
@@ -412,35 +787,34 @@ def student_profile(request):
 
 
 @login_required
-def add_class_routine(request):
+def create_default_periods(request):
+    """Create default routine periods"""
     if request.user.user_type not in ['admin', 'teacher']:
         return HttpResponseForbidden("You don't have permission to access this page.")
 
-    if request.method == 'POST':
-        form = ClassRoutineForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Class routine added successfully!')
-            return redirect('class_routine')
+    # Default periods based on your Excel sheet
+    default_periods = [
+        {'start_time': '09:00', 'end_time': '09:45', 'is_break': False, 'break_name': '', 'order': 1},
+        {'start_time': '09:45', 'end_time': '10:30', 'is_break': False, 'break_name': '', 'order': 2},
+        {'start_time': '10:30', 'end_time': '11:15', 'is_break': False, 'break_name': '', 'order': 3},
+        {'start_time': '11:15', 'end_time': '12:00', 'is_break': True, 'break_name': 'Break Time', 'order': 4},
+        {'start_time': '12:00', 'end_time': '12:45', 'is_break': False, 'break_name': '', 'order': 5},
+        {'start_time': '12:45', 'end_time': '13:30', 'is_break': False, 'break_name': '', 'order': 6},
+    ]
+
+    created_count = 0
+    for period_data in default_periods:
+        period, created = RoutinePeriod.objects.get_or_create(
+            start_time=period_data['start_time'],
+            end_time=period_data['end_time'],
+            defaults=period_data
+        )
+        if created:
+            created_count += 1
+
+    if created_count > 0:
+        messages.success(request, f'Successfully created {created_count} default periods!')
     else:
-        form = ClassRoutineForm()
+        messages.info(request, 'All default periods already exist.')
 
-    return render(request, 'school/add_class_routine.html', {'form': form})
-
-
-@login_required
-def manage_class_routines(request):
-    if request.user.user_type not in ['admin', 'teacher']:
-        return HttpResponseForbidden("You don't have permission to access this page.")
-
-    routines = ClassRoutine.objects.all()
-
-    if request.user.user_type == 'teacher':
-        try:
-            teacher = Teacher.objects.get(user=request.user)
-            subjects = Subject.objects.filter(teacher=teacher)
-            routines = routines.filter(subject__in=subjects)
-        except Teacher.DoesNotExist:
-            routines = ClassRoutine.objects.none()
-
-    return render(request, 'school/manage_class_routines.html', {'routines': routines})
+    return redirect('manage_routine_periods')
